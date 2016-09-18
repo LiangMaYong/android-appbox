@@ -4,7 +4,7 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
-
+        <activity android:name=".core.launchers.LauncherActivity" />
     </application>
 
 </manifest>
