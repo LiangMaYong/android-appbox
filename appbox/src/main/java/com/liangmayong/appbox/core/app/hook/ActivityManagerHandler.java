@@ -1,9 +1,15 @@
 package com.liangmayong.appbox.core.app.hook;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+
+import com.liangmayong.appbox.core.app.AppConstant;
+import com.liangmayong.appbox.core.app.AppExtras;
+import com.liangmayong.appbox.core.launchers.LauncherService;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -25,9 +31,38 @@ public class ActivityManagerHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Log.e(TAG, method.getName());
         if ("startService".equals(method.getName())) {
-
+            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
+            Intent intent = integerIntentPair.second;
+            Intent targetIntent = null;
+            if (intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
+                String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
+                if (path == null) {
+                    path = "";
+                }
+                String serviceName = "";
+                if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
+                    serviceName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
+                } else {
+                    serviceName = intent.getComponent().getClassName();
+                }
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    AppExtras.saveExtras(serviceName, extras);
+                }
+                Intent newIntent = new Intent();
+                ComponentName componentName = new ComponentName(mContext.getPackageName(), LauncherService.class.getName());
+                newIntent.setComponent(componentName);
+                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, serviceName);
+                newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
+                targetIntent = newIntent;
+            } else {
+                targetIntent = intent;
+            }
+            args[integerIntentPair.first] = targetIntent;
+            return method.invoke(mBase, args);
+        } else if ("stopService".equals(method.getName())) {
+            Log.e(TAG, "stopService");
         }
         return method.invoke(mBase, args);
     }

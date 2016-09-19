@@ -1,5 +1,6 @@
 package com.liangmayong.android_appbox;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,7 @@ public class Main2Activity extends AppCompatActivity {
         intent.putExtra("name", "appbox");
         AppBean bean = new AppBean("liangmayong");
         Log.d("TAG", bean + "");
-        intent.putExtra("bean",bean);
+        intent.putExtra("bean", bean);
         startActivity(intent);
     }
 }

@@ -1,16 +1,12 @@
 package com.liangmayong.appbox.core.app;
 
-import android.annotation.TargetApi;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.liangmayong.appbox.core.launchers.LauncherActivity;
 
 
 /**
@@ -113,48 +109,20 @@ public final class AppContext extends Application {
         return context;
     }
 
-
-    /**
-     * startActivity
-     *
-     * @param intent intent
-     */
     @Override
     public void startActivity(Intent intent) {
         startActivity(intent, null);
     }
 
-    /**
-     * startActivity
-     *
-     * @param intent  intent
-     * @param options options
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void startActivity(Intent intent, Bundle options) {
-        if (!LauncherActivity.class.getName().equals(intent.getComponent().getClassName())) {
-            Intent proxyIntent = new Intent(this, LauncherActivity.class);
-            proxyIntent.putExtras(intent);
-            proxyIntent.setFlags(intent.getFlags());
-            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path != null && !"".equals(path)) {
-                proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-            } else {
-                proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, appPath);
+        if (!intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
+            intent.putExtra(AppConstant.INTENT_APP_PATH, appPath);
+            if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH) && intent.getComponent() != null) {
+                intent.putExtra(AppConstant.INTENT_APP_LAUNCH, intent.getComponent().getClassName());
             }
-            String launch = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-            if ((launch == null || "".equals(launch))) {
-                try {
-                    launch = intent.getComponent().getClassName();
-                } catch (Exception e) {
-                }
-            }
-            proxyIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, launch);
-            super.startActivity(proxyIntent, options);
-        } else {
-            super.startActivity(intent, options);
         }
+        super.startActivity(intent, options);
     }
 
     /**
@@ -180,5 +148,17 @@ public final class AppContext extends Application {
         for (int i = 0; i < intents.length; i++) {
             startActivity(intents[0], options);
         }
+    }
+
+
+    @Override
+    public ComponentName startService(Intent service) {
+        if (!service.hasExtra(AppConstant.INTENT_APP_PATH)) {
+            service.putExtra(AppConstant.INTENT_APP_PATH, appPath);
+            if (service.hasExtra(AppConstant.INTENT_APP_LAUNCH) && service.getComponent() != null) {
+                service.putExtra(AppConstant.INTENT_APP_LAUNCH, service.getComponent().getClassName());
+            }
+        }
+        return super.startService(service);
     }
 }

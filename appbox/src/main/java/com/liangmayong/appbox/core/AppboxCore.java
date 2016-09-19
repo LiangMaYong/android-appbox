@@ -3,6 +3,7 @@ package com.liangmayong.appbox.core;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Instrumentation;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import com.liangmayong.appbox.core.app.AppReflect;
 import com.liangmayong.appbox.core.app.hook.ActivityManagerHandler;
 import com.liangmayong.appbox.core.app.hook.PackageManagerHandler;
 import com.liangmayong.appbox.core.launchers.LauncherActivity;
+import com.liangmayong.appbox.core.launchers.LauncherService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -148,6 +150,41 @@ public class AppboxCore {
             intent.putExtras(extars);
         }
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * startService
+     *
+     * @param context context
+     * @param path    path
+     * @param serName serName
+     */
+    public ComponentName startService(Context context, String path, String serName) {
+        return startService(context, path, serName, null);
+    }
+
+    /**
+     * startService
+     *
+     * @param context context
+     * @param path    path
+     * @param serName serName
+     * @param extars  extars
+     */
+    public ComponentName startService(Context context, String path, String serName, Bundle extars) {
+        if (!isInit) {
+            return null;
+        }
+        if (context == null) {
+            return null;
+        }
+        Intent intent = new Intent(context, LauncherService.class);
+        intent.putExtra(AppConstant.INTENT_APP_PATH, path);
+        intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
+        if (extars != null) {
+            intent.putExtras(extars);
+        }
+        return context.startService(intent);
     }
 
     /**
