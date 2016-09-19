@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppMethod {
+public final class AppMethod {
 
     // STRING_METHOD_MAP
     private static final Map<String, Method> STRING_METHOD_MAP = new HashMap<String, Method>();

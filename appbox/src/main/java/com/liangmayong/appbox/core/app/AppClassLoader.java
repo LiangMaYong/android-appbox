@@ -11,7 +11,7 @@ import dalvik.system.DexClassLoader;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppClassLoader {
+public final class AppClassLoader {
 
     /**
      * CLASS_LOADER_MAP

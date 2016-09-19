@@ -3,12 +3,12 @@ package com.liangmayong.appbox.core.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Window;
 
-import com.liangmayong.appbox.core.listeners.OnActivityLifeCycleListener;
+import com.liangmayong.appbox.core.app.listeners.OnActivityLifeCycleListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -262,18 +262,18 @@ public final class AppLifeCycle {
             } catch (Exception e) {
             }
         }
-        // replace res
+        // resources
+        Resources resources = AppResources.getResources(target.getBaseContext(), path);
+        if (resources != null) {
+            AppReflect.setField(target.getClass(), target, "mResources", resources);
+        }
+        // context
+        Context context = AppContext.get(target.getBaseContext(), path);
+        if (context != null) {
+            AppReflect.setField(target.getClass(), target, "mBase", context);
+        }
+
         if (path != null && !"".equals(path)) {
-            // resources
-            AppResources resources = AppResources.getResources(path);
-            if (resources != null) {
-                AppReflect.setField(target.getClass(), target, "mResources", resources);
-            }
-            // context
-            Context context = AppContext.get(target.getBaseContext(), path);
-            if (context != null) {
-                AppReflect.setField(target.getClass(), target, "mBase", context);
-            }
             //TODO:replace application
         }
         // with samsung

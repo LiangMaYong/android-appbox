@@ -23,7 +23,7 @@ import com.liangmayong.appbox.core.launchers.LauncherActivity;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppInstrumentation extends Instrumentation {
+public final class AppInstrumentation extends Instrumentation {
 
     private Instrumentation mInstrumentation;
 
@@ -235,8 +235,9 @@ public class AppInstrumentation extends Instrumentation {
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         String activityName = "";
         try {
-            activityName = intent.getStringExtra(AppConstant.INTENT_APP_ACTIVITY);
+            activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         if (activityName != null && !"".equals(activityName)) {
             ClassLoader pluginLoader = null;
@@ -359,22 +360,39 @@ public class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                             Intent intent, int requestCode, Bundle options) {
-        String activityName = intent != null ? intent.getStringExtra(AppConstant.INTENT_APP_ACTIVITY) : null;
-        if (activityName != null && !"".equals(activityName)) {
-            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path == null) {
-                path = "";
+        try {
+            Intent targetIntent = null;
+            if (intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
+                String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
+                if (path == null || "".equals(path)) {
+                    path = target.getIntent().getStringExtra(AppConstant.INTENT_APP_PATH);
+                    if (path == null) {
+                        path = "";
+                    }
+                }
+                String activityName = "";
+                if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
+                    activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
+                } else {
+                    activityName = intent.getComponent().getClassName();
+                }
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    AppExtras.saveExtras(activityName, extras);
+                }
+                Intent newIntent = new Intent();
+                newIntent.setClassName(who, LauncherActivity.class.getName());
+                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
+                newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
+                targetIntent = newIntent;
+            } else {
+                targetIntent = intent;
             }
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                AppExtras.saveExtras(activityName, extras);
-            }
-            Intent newIntent = new Intent(who, LauncherActivity.class);
-            newIntent.putExtra(AppConstant.INTENT_APP_ACTIVITY, activityName);
-            newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-            return proxyExecStartActivity(who, contextThread, token, target, newIntent, requestCode, options);
+            return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
+        } catch (Exception e) {
+            AppLoger.getDefualt().error("The execStartActivity fail", e);
         }
-        return proxyExecStartActivity(who, contextThread, token, target, intent, requestCode, options);
+        return null;
     }
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment fragment,
@@ -388,7 +406,7 @@ public class AppInstrumentation extends Instrumentation {
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class, int.class, Bundle.class);
             return method.invoke(who, contextThread, token, fragment, intent, requestCode, options);
         } catch (Exception e) {
-            e.printStackTrace();
+            AppLoger.getDefualt().error("The execStartActivity fail", e);
             return null;
         }
     }
@@ -407,14 +425,14 @@ public class AppInstrumentation extends Instrumentation {
      */
     protected ActivityResult proxyExecStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                                     Intent intent, int requestCode, Bundle options) {
-        if (intent.getComponent() == null) {
-            intent.setClassName(who, LauncherActivity.class.getName());
-        }
         try {
+            if (intent.getComponent() == null) {
+                intent.setClassName(who, LauncherActivity.class.getName());
+            }
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
             return method.invoke(who, contextThread, token, target, intent, requestCode, options);
         } catch (Exception e) {
-            e.printStackTrace();
+            AppLoger.getDefualt().error("The execStartActivity fail", e);
             return null;
         }
     }

@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppNative {
+public final class AppNative {
 
     private AppNative() {
     }

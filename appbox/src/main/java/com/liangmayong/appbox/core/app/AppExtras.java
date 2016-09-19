@@ -1,6 +1,8 @@
 package com.liangmayong.appbox.core.app;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Map;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppExtras {
+public final class AppExtras {
 
     private AppExtras() {
     }
@@ -32,7 +34,12 @@ public class AppExtras {
             STRING_LIST_MAP.get(act).add(extras);
         } else {
             List<Bundle> list = new ArrayList<>();
-            list.add(extras);
+            Parcel parcel = Parcel.obtain();
+            parcel.writeBundle(extras);
+            Bundle bundle = parcel.readBundle();
+            Log.e("TAG", bundle + "");
+            Log.e("TAG", extras + "");
+            list.add(bundle);
             STRING_LIST_MAP.put(act, list);
         }
     }
@@ -47,9 +54,9 @@ public class AppExtras {
         if (STRING_LIST_MAP.containsKey(act)) {
             List<Bundle> list = STRING_LIST_MAP.get(act);
             if (!list.isEmpty()) {
-                Bundle bundle = list.get(0);
+                Bundle extras = list.get(0);
                 list.remove(0);
-                return bundle;
+                return new Bundle(extras);
             }
         }
         return null;

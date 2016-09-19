@@ -18,7 +18,7 @@ import org.xmlpull.v1.XmlPullParser;
  * @author LiangMaYong
  * @version 1.0
  */
-public class AppLayoutInflater extends LayoutInflater {
+public final class AppLayoutInflater extends LayoutInflater {
 
     private LayoutInflater target;
     private final Class<?> layoutClass;

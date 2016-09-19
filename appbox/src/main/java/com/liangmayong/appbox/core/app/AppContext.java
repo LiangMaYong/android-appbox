@@ -2,23 +2,21 @@ package com.liangmayong.appbox.core.app;
 
 import android.annotation.TargetApi;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.liangmayong.appbox.core.launchers.LauncherActivity;
-import com.liangmayong.appbox.core.launchers.LauncherService;
 
 
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class AppContext extends Application {
+public final class AppContext extends Application {
 
     // plugin appPath
     private String appPath = "";
@@ -26,48 +24,15 @@ public class AppContext extends Application {
     private ClassLoader classLoader = null;
 
     /**
-     * setAppPath
+     * AppContext
      *
-     * @param appPath appPath
+     * @param base
      */
-    private void setAppPath(String appPath) {
-        if (this.appPath == null) {
-            this.appPath = appPath;
-            this.classLoader = null;
-        } else if (!this.appPath.equals(appPath)) {
-            this.appPath = appPath;
-            this.classLoader = null;
-        }
-    }
-
-    /**
-     * get plugin context
-     *
-     * @param base    base
-     * @param appPath appPath
-     * @return context
-     */
-    public static Context get(Context base, String appPath) {
-        if (base instanceof ContextWrapper) {
-            base = ((ContextWrapper) base).getBaseContext();
-        }
-        if (appPath == null || "".equals(appPath)) {
-            return base;
-        }
-        if (base == null) {
-            return base;
-        }
-        if (AppContext.class.getName().equals(base.getClass().getName())) {
-            AppContext context = (AppContext) base;
-            context.setAppPath(appPath);
-            return context;
-        }
+    private AppContext(Context base) {
         try {
-            AppContext context = new AppContext(base);
-            context.setAppPath(appPath);
-            return context;
+            AppMethod method = new AppMethod(getClass(), this, "attach", Context.class);
+            method.invoke(base);
         } catch (Exception e) {
-            return base;
         }
     }
 
@@ -92,6 +57,7 @@ public class AppContext extends Application {
         return classLoader;
     }
 
+
     /**
      * getAssets
      *
@@ -102,7 +68,7 @@ public class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getAssets();
         }
-        return AppResources.getAssets(appPath);
+        return AppResources.getAssets(getBaseContext(), appPath);
     }
 
     /**
@@ -115,50 +81,38 @@ public class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getResources();
         }
-        return AppResources.getResources(appPath);
+        return AppResources.getResources(getBaseContext(), appPath);
     }
 
+
     /**
-     * AppContext
+     * setAppPath
      *
-     * @param base
+     * @param appPath appPath
      */
-    private AppContext(Context base) {
-        try {
-            AppMethod method = new AppMethod(getClass(), this, "attach", Context.class);
-            method.invoke(base);
-        } catch (Exception e) {
+    private void setAppPath(String appPath) {
+        if (this.appPath == null) {
+            this.appPath = appPath;
+            this.classLoader = null;
+        } else if (!this.appPath.equals(appPath)) {
+            this.appPath = appPath;
+            this.classLoader = null;
         }
     }
 
     /**
-     * startService
+     * get
      *
-     * @param service service
-     * @return componentName
+     * @param base    base
+     * @param appPath appPath
+     * @return context
      */
-    @Override
-    public ComponentName startService(Intent service) {
-        if (!LauncherActivity.class.getName().equals(service.getComponent().getClassName())) {
-            Intent proxyIntent = new Intent(this, LauncherService.class);
-            proxyIntent.putExtras(service);
-            String path = service.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path == null || "".equals(path)) {
-                path = appPath;
-            }
-            proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-            String serviceName = service.getStringExtra(AppConstant.INTENT_APP_ACTIVITY);
-            if ((serviceName == null || "".equals(serviceName))) {
-                try {
-                    serviceName = service.getComponent().getClassName();
-                } catch (Exception e) {
-                }
-            }
-            proxyIntent.putExtra(AppConstant.INTENT_APP_ACTIVITY, serviceName);
-            return super.startService(proxyIntent);
-        }
-        return super.startService(service);
+    public static Context get(Context base, String appPath) {
+        AppContext context = new AppContext(base);
+        context.setAppPath(appPath);
+        return context;
     }
+
 
     /**
      * startActivity
@@ -184,33 +138,23 @@ public class AppContext extends Application {
             proxyIntent.putExtras(intent);
             proxyIntent.setFlags(intent.getFlags());
             String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path == null || "".equals(path)) {
-                path = appPath;
+            if (path != null && !"".equals(path)) {
+                proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
+            } else {
+                proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, appPath);
             }
-            proxyIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-            String activityName = intent.getStringExtra(AppConstant.INTENT_APP_ACTIVITY);
-            if ((activityName == null || "".equals(activityName))) {
+            String launch = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
+            if ((launch == null || "".equals(launch))) {
                 try {
-                    activityName = intent.getComponent().getClassName();
+                    launch = intent.getComponent().getClassName();
                 } catch (Exception e) {
                 }
             }
-            proxyIntent.putExtra(AppConstant.INTENT_APP_ACTIVITY, activityName);
+            proxyIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, launch);
             super.startActivity(proxyIntent, options);
         } else {
             super.startActivity(intent, options);
         }
-    }
-
-    /**
-     * getSystemService
-     *
-     * @param name name
-     * @return object
-     */
-    @Override
-    public Object getSystemService(String name) {
-        return super.getSystemService(name);
     }
 
     /**
@@ -237,5 +181,4 @@ public class AppContext extends Application {
             startActivity(intents[0], options);
         }
     }
-
 }
