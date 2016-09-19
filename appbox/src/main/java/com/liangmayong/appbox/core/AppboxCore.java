@@ -3,10 +3,8 @@ package com.liangmayong.appbox.core;
 import android.app.Application;
 import android.app.Instrumentation;
 
-import com.liangmayong.appbox.core.app.AppLifeCycle;
 import com.liangmayong.appbox.core.app.AppInstrumentation;
 import com.liangmayong.appbox.core.app.AppReflect;
-import com.liangmayong.appbox.core.core.DefualtLifeCycle;
 
 /**
  * Created by LiangMaYong on 2016/9/18.
@@ -48,7 +46,6 @@ public class AppboxCore {
         if (application == null) {
             return false;
         }
-        AppLifeCycle.registerActivityLifeCycleListener(new DefualtLifeCycle());
         try {
             Object loadedApk = AppReflect.getField(Application.class, application, "mLoadedApk");
             if (loadedApk != null) {

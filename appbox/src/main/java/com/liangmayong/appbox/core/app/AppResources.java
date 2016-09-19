@@ -27,6 +27,9 @@ public class AppResources extends Resources {
      * @return resources
      */
     public static AppResources getResources(String appPath) {
+        if (appPath == null || "".equals(appPath)) {
+            return null;
+        }
         if (STRING_APP_RESOURCES_MAP.containsKey(appPath)) {
             return STRING_APP_RESOURCES_MAP.get(appPath);
         }

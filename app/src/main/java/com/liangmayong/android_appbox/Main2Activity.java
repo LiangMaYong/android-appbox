@@ -10,7 +10,7 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(this, "Main2", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,getResources().getClass().getName(), Toast.LENGTH_SHORT).show();
         //AppLifeCycle.exit();
     }
 }

@@ -11,6 +11,22 @@ public class AppReflect {
     }
 
     /**
+     * isGeneric
+     *
+     * @param clazz clazz
+     * @param name  name
+     * @return true or false
+     */
+    public static boolean isGeneric(Class<?> clazz, String name) {
+        for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
+            if (name.equals(clazz.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * setField
      *
      * @param clazz     clazz

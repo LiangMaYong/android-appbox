@@ -1,8 +1,12 @@
 package com.liangmayong.appbox.core.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Window;
 
 import com.liangmayong.appbox.core.listeners.OnActivityLifeCycleListener;
 
@@ -21,6 +25,8 @@ public final class AppLifeCycle {
 
     //currentActivity
     private static Activity currentActivity = null;
+    // currentPath
+    private static String currentPath = "";
 
     /**
      * getCurrentActivity
@@ -75,18 +81,11 @@ public final class AppLifeCycle {
         return ACTIVITIES;
     }
 
-    /**
-     * activitys
-     */
+    // ACTIVITIES
     private static final List<Activity> ACTIVITIES = new ArrayList<Activity>();
-    /**
-     * pluginPath -> List<Activity>
-     */
+    // STRING_ACTIVITY_LIST_MAP
     private static final Map<String, List<Activity>> STRING_ACTIVITY_LIST_MAP = new HashMap<String, List<Activity>>();
-
-    /**
-     * life cycle listeners
-     */
+    // LIFE_CYCLE_LISTENERS
     private static final List<OnActivityLifeCycleListener> LIFE_CYCLE_LISTENERS = new ArrayList<OnActivityLifeCycleListener>();
 
     /**
@@ -130,6 +129,7 @@ public final class AppLifeCycle {
         if (!ACTIVITIES.contains(target)) {
             ACTIVITIES.add(target);
         }
+        replaceActivity(target);
         String appPath = getAppPathByActivity(target);
         if (appPath != null && !"".equals(appPath)) {
             if (STRING_ACTIVITY_LIST_MAP.containsKey(appPath)) {
@@ -248,6 +248,47 @@ public final class AppLifeCycle {
             }
         }
         currentActivity = target;
+    }
+
+    private static void replaceActivity(Activity target) {
+        String path = getAppPathByActivity(target);
+        if (!currentPath.equals(path)) {
+            currentPath = path == null ? "" : path;
+            //clear LayoutInflater cache
+            try {
+                Object sConstructorMap = AppReflect.getField(LayoutInflater.class, null, "sConstructorMap");
+                AppMethod method = new AppMethod(sConstructorMap.getClass(), sConstructorMap, "clear");
+                method.invoke();
+            } catch (Exception e) {
+            }
+        }
+        // replace res
+        if (path != null && !"".equals(path)) {
+            // resources
+            AppResources resources = AppResources.getResources(path);
+            if (resources != null) {
+                AppReflect.setField(target.getClass(), target, "mResources", resources);
+            }
+            // context
+            Context context = AppContext.get(target.getBaseContext(), path);
+            if (context != null) {
+                AppReflect.setField(target.getClass(), target, "mBase", context);
+            }
+            //TODO:replace application
+        }
+        // with samsung
+        if (android.os.Build.MODEL.startsWith("GT")) {
+            Window window = target.getWindow();
+            try {
+                LayoutInflater originInflater = window.getLayoutInflater();
+                if (!(originInflater instanceof AppLayoutInflater)) {
+                    AppReflect.setField(window.getClass(), window, "mLayoutInflater",
+                            new AppLayoutInflater(originInflater));
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
