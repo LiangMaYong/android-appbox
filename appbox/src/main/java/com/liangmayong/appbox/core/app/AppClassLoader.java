@@ -44,7 +44,7 @@ public final class AppClassLoader {
      */
     public static ClassLoader getClassloader(String appPath) {
         if (appPath == null || "".equals(appPath)) {
-            return null;
+            return AppClassLoader.class.getClassLoader();
         }
         ClassLoader classLoader = null;
         if (CLASS_LOADER_MAP.containsKey(appPath)) {

@@ -17,5 +17,10 @@ public class Main4Activity extends AppCompatActivity {
         AppBean bean = getIntent().getParcelableExtra("bean");
         Toast.makeText(this, bean.getName() + "", Toast.LENGTH_SHORT).show();
         Log.d("TAG", bean + "");
+
+        Intent data = new Intent();
+        data.putExtra("name", "MAIN4");
+        setResult(RESULT_OK, data);
+
     }
 }

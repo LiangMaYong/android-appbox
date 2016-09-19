@@ -48,7 +48,7 @@ public class ActivityManagerHandler implements InvocationHandler {
                 }
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
-                    AppExtras.saveExtras(serviceName, extras);
+                    AppExtras.saveExtras(path, serviceName, extras);
                 }
                 Intent newIntent = new Intent();
                 ComponentName componentName = new ComponentName(mContext.getPackageName(), LauncherService.class.getName());

@@ -16,9 +16,10 @@ public class MService extends Service {
         return null;
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "onStartCommand", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "onStartCommand MService  " + getApplication().getClass().getName(), Toast.LENGTH_SHORT).show();
         return super.onStartCommand(intent, flags, startId);
     }
 }

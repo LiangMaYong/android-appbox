@@ -120,12 +120,6 @@ public final class AppLifeCycle {
      * @param savedInstanceState savedInstanceState
      */
     protected static void onCreate(Activity target, Bundle savedInstanceState) {
-        Bundle bundle = AppExtras.getExtras(target.getClass().getName());
-        if (bundle != null) {
-            Intent intent = new Intent();
-            intent.putExtras(bundle);
-            target.setIntent(intent);
-        }
         if (!ACTIVITIES.contains(target)) {
             ACTIVITIES.add(target);
         }
@@ -252,6 +246,12 @@ public final class AppLifeCycle {
 
     private static void replaceActivity(Activity target) {
         String path = getAppPathByActivity(target);
+        Bundle bundle = AppExtras.getExtras(path, target.getClass().getName());
+        if (bundle != null) {
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+            target.setIntent(intent);
+        }
         if (!currentPath.equals(path)) {
             currentPath = path == null ? "" : path;
             //clear LayoutInflater cache

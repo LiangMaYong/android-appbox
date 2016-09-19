@@ -1,10 +1,10 @@
 package com.liangmayong.appbox.core.app;
 
 import android.os.Bundle;
+import android.os.Parcel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -16,7 +16,7 @@ public final class AppExtras {
     }
 
     //extras map
-    private static final Map<String, List<Bundle>> STRING_LIST_MAP = new HashMap<String, List<Bundle>>();
+    private static final Map<String, LinkedList<Bundle>> STRING_LIST_MAP = new HashMap<String, LinkedList<Bundle>>();
 
     /**
      * saveExtras
@@ -24,16 +24,16 @@ public final class AppExtras {
      * @param act    act
      * @param extras extras
      */
-    public static void saveExtras(String act, Bundle extras) {
+    public static void saveExtras(String appPath, String act, Bundle extras) {
         if (extras == null) {
             extras = new Bundle();
         }
-        if (STRING_LIST_MAP.containsKey(act)) {
-            STRING_LIST_MAP.get(act).add(extras);
+        if (STRING_LIST_MAP.containsKey(appPath + act)) {
+            STRING_LIST_MAP.get(appPath + act).add(extras);
         } else {
-            List<Bundle> list = new ArrayList<Bundle>();
+            LinkedList<Bundle> list = new LinkedList<Bundle>();
             list.add(extras);
-            STRING_LIST_MAP.put(act, list);
+            STRING_LIST_MAP.put(appPath + act, list);
         }
     }
 
@@ -43,13 +43,20 @@ public final class AppExtras {
      * @param act act
      * @return extras
      */
-    public synchronized static Bundle getExtras(String act) {
-        if (STRING_LIST_MAP.containsKey(act)) {
-            List<Bundle> list = STRING_LIST_MAP.get(act);
+    public synchronized static Bundle getExtras(String appPath, String act) {
+        if (STRING_LIST_MAP.containsKey(appPath + act)) {
+            LinkedList<Bundle> list = STRING_LIST_MAP.get(appPath + act);
             if (!list.isEmpty()) {
                 Bundle extras = list.get(0);
-                list.remove(0);
-                return new Bundle(extras);
+                list.remove(extras);
+                try {
+                    Parcel parcel = Parcel.obtain();
+                    parcel.writeBundle(extras);
+                    parcel.setDataPosition(0);
+                    extras = parcel.readBundle(AppClassLoader.getClassloader(appPath));
+                } catch (Exception e) {
+                }
+                return extras;
             }
         }
         return null;

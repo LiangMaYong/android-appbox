@@ -378,7 +378,7 @@ public final class AppInstrumentation extends Instrumentation {
                 }
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
-                    AppExtras.saveExtras(activityName, extras);
+                    AppExtras.saveExtras(path, activityName, extras);
                 }
                 Intent newIntent = new Intent();
                 newIntent.setClassName(who, LauncherActivity.class.getName());

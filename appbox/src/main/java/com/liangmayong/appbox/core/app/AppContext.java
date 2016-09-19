@@ -34,6 +34,9 @@ public final class AppContext extends Application {
 
     @Override
     public Context getApplicationContext() {
+        if (appPath == null || "".equals(appPath)) {
+            return super.getApplicationContext();
+        }
         return this;
     }
 
