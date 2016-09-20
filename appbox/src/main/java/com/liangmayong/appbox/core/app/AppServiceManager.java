@@ -16,6 +16,19 @@ public class AppServiceManager {
 
     private static final Map<String, Service> STRING_SERVICE_MAP = new HashMap<String, Service>();
 
+    public static void onDestroy() {
+        for (Map.Entry<String, Service> entry : STRING_SERVICE_MAP.entrySet()) {
+            entry.getValue().onDestroy();
+        }
+        STRING_SERVICE_MAP.clear();
+    }
+
+    public static void onLowMemory() {
+        for (Map.Entry<String, Service> entry : STRING_SERVICE_MAP.entrySet()) {
+            entry.getValue().onLowMemory();
+        }
+    }
+
     public static Service handleCreateService(Context context, String appPath, String serviceName) {
         String key = "service_" + appPath + serviceName;
         if (STRING_SERVICE_MAP.containsKey(key)) {

@@ -6,6 +6,7 @@ import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -185,6 +186,42 @@ public class AppboxCore {
             intent.putExtras(extars);
         }
         return context.startService(intent);
+    }
+
+    /**
+     * bindService
+     *
+     * @param activity activity
+     * @param path     path
+     * @param serName  serName
+     * @param conn     conn
+     * @param flags    flags
+     * @return false
+     */
+    public boolean bindService(Activity activity, String path, String serName, Bundle extars, ServiceConnection conn, int flags) {
+        if (!isInit) {
+            return false;
+        }
+        if (activity == null) {
+            return false;
+        }
+        Intent intent = new Intent(activity, LauncherService.class);
+        intent.putExtra(AppConstant.INTENT_APP_PATH, path);
+        intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
+        if (extars != null) {
+            intent.putExtras(extars);
+        }
+        return activity.bindService(intent, conn, flags);
+    }
+
+    /**
+     * unbindService
+     *
+     * @param activity activity
+     * @param conn     conn
+     */
+    public void unbindService(Activity activity, ServiceConnection conn) {
+        activity.unbindService(conn);
     }
 
     /**

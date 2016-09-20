@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Window;
 
-import com.liangmayong.appbox.core.app.listeners.OnActivityLifeCycleListener;
+import com.liangmayong.appbox.core.app.listener.OnActivityLifeCycleListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,18 +1,48 @@
 package com.liangmayong.appbox.core.app;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.drawable.Drawable;
 
+import com.liangmayong.appbox.core.app.parser.AppParser;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by liangmayong on 2016/9/19.
  */
 public final class AppInfo {
+
+    // STRING_APP_INFO_MAP
+    private static final Map<String, AppInfo> STRING_APP_INFO_MAP = new HashMap<String, AppInfo>();
+
+    /**
+     * getAppInfo
+     *
+     * @param context context
+     * @param appPath appPath
+     * @return info
+     */
+    public static AppInfo getAppInfo(Context context, String appPath) {
+        if (appPath == null || "".equals(appPath)) {
+            return null;
+        }
+        String key = "appinfo_" + appPath;
+        if (STRING_APP_INFO_MAP.containsKey(key)) {
+            return STRING_APP_INFO_MAP.get(key);
+        }
+        AppInfo info = AppParser.parserApp(context, appPath);
+        if (info != null) {
+            STRING_APP_INFO_MAP.put(key, info);
+        }
+        return info;
+    }
+
 
     private String lable = "";
     // packageInfo
@@ -25,68 +55,138 @@ public final class AppInfo {
     private Map<String, IntentFilter> intentFilters;
     // configures
     private Map<String, String> configure = null;
-    // application
-    private Application application = null;
 
-    public AppInfo() {
+    private AppInfo() {
     }
 
-    public String getLable() {
-        return lable;
-    }
-
-    public void setLable(String lable) {
-        this.lable = lable;
-    }
-
-    public PackageInfo getPackageInfo() {
-        return packageInfo;
-    }
-
-    public void setPackageInfo(PackageInfo packageInfo) {
-        this.packageInfo = packageInfo;
-    }
-
-    public Drawable getIcon() {
-        return icon;
-    }
-
-    public void setIcon(Drawable icon) {
-        this.icon = icon;
-    }
-
+    /**
+     * getAppPath
+     *
+     * @return appPath
+     */
     public String getAppPath() {
         return appPath;
     }
 
-    public void setAppPath(String appPath) {
-        this.appPath = appPath;
+    /**
+     * getIcon
+     *
+     * @return icon
+     */
+    public Drawable getIcon() {
+        return icon;
     }
 
+    /**
+     * getConfigure in appbox.xml
+     *
+     * @param key key
+     * @return configure
+     */
+    public String getConfigure(String key) {
+        String configureValue = "";
+        if (configure != null) {
+            if (configure.containsKey(key)) {
+                configureValue = configure.get(key);
+            }
+        }
+        return configureValue;
+    }
+
+    /**
+     * getIntentFilters
+     *
+     * @return intentFilters
+     */
     public Map<String, IntentFilter> getIntentFilters() {
+        if (intentFilters == null) {
+            return new HashMap<String, IntentFilter>();
+        }
         return intentFilters;
     }
 
-    public void setIntentFilters(Map<String, IntentFilter> intentFilters) {
-        this.intentFilters = intentFilters;
+    /**
+     * getPackageInfo
+     *
+     * @return packageInfo
+     */
+    public PackageInfo getPackageInfo() {
+        return packageInfo;
     }
 
-    public Map<String, String> getConfigure() {
-        return configure;
+    /**
+     * getLable
+     *
+     * @return lable
+     */
+    public String getLable() {
+        return lable;
     }
 
-    public void setConfigure(Map<String, String> configure) {
-        this.configure = configure;
+    /**
+     * getMain
+     *
+     * @return main
+     */
+    public String getMain() {
+        String main = getConfigure("main");
+        if (main == null || "".equals(main)) {
+            Map<String, IntentFilter> filters = getIntentFilters();
+            for (Map.Entry<String, IntentFilter> entry : filters.entrySet()) {
+                IntentFilter intentFilter = entry.getValue();
+                if (intentFilter.countCategories() > 0) {
+                    for (int i = 0; i < intentFilter.countCategories(); i++) {
+                        String category = intentFilter.getCategory(i);
+                        if (category.equals("android.intent.category.LAUNCHER")) {
+                            main = entry.getKey();
+                            return replaceClassName(main);
+                        }
+                    }
+                }
+            }
+        }
+        return replaceClassName(main);
     }
 
-    public Application getApplication() {
-        return application;
+    /**
+     * replaceClassName
+     *
+     * @param className className
+     * @return className
+     */
+    private String replaceClassName(String className) {
+        String newClassName = "";
+        if (className.startsWith(".")) {
+            newClassName = getPackageInfo().packageName + className;
+        } else if (className.indexOf(".") == -1) {
+            newClassName = getPackageInfo().packageName + "." + className;
+        }
+        return newClassName;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    /**
+     * getApplicationName
+     *
+     * @return application name
+     */
+    public String getApplicationName() {
+        String appClassName = getPackageInfo().applicationInfo.className;
+        if (appClassName == null || "".equals(appClassName)) {
+            appClassName = Application.class.getName();
+        }
+        return appClassName;
     }
 
+    /**
+     * getApplicationInfo
+     *
+     * @return applicationInfo
+     */
+    public ApplicationInfo getApplicationInfo() {
+        if (getPackageInfo() == null)
+            return null;
+        return getPackageInfo().applicationInfo;
+    }
 
     /**
      * getActivityInfo
@@ -95,55 +195,19 @@ public final class AppInfo {
      * @return activity info
      */
     public ActivityInfo getActivityInfo(String actName) {
-        if (getPackageInfo().activities == null) {
-            return null;
-        }
-        for (ActivityInfo act : getPackageInfo().activities) {
-            if (act.name.equals(replaceClassName(actName))) {
-                //act.applicationInfo.i
-                try {
+        String activityName = replaceClassName(actName);
+        if (getPackageInfo().activities != null) {
+            for (ActivityInfo act : getPackageInfo().activities) {
+                if (act.name.equals(activityName)) {
                     ApplicationInfo info = getApplicationInfo();
                     if (info != null) {
                         act.applicationInfo = info;
                     }
-                } catch (Exception e) {
+                    return act;
                 }
-                return act;
             }
         }
         return null;
-    }
-
-    /**
-     * getApplicationInfo
-     *
-     * @return info
-     */
-    public ApplicationInfo getApplicationInfo() {
-        PackageInfo info = getPackageInfo();
-        if (info == null)
-            return null;
-        return info.applicationInfo;
-    }
-
-    /**
-     * replaceClassName
-     *
-     * @param className className
-     * @return classname
-     */
-    private String replaceClassName(String className) {
-        if (className == null || "".equals(className)) {
-            return "";
-        }
-        String newClassName = "";
-        if (className.startsWith(".")) {
-            newClassName = getPackageInfo().packageName + className;
-        }
-        if (className.indexOf(".") == -1) {
-            newClassName = getPackageInfo().packageName + "." + className;
-        }
-        return newClassName;
     }
 
     /**
@@ -152,7 +216,7 @@ public final class AppInfo {
      * @param fieldName fieldName
      * @return Object
      */
-    public final Object getField(String fieldName) {
+    public Object getField(String fieldName) {
         return AppReflect.getField(getClass(), this, fieldName);
     }
 
@@ -163,7 +227,8 @@ public final class AppInfo {
      * @param value     value
      * @return boolean
      */
-    public final boolean setField(String fieldName, Object value) {
+    public boolean setField(String fieldName, Object value) {
         return AppReflect.setField(getClass(), this, fieldName, value);
     }
+
 }
