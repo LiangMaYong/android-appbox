@@ -15,10 +15,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.liangmayong.appbox.core.launcher.LauncherActivity;
+import com.liangmayong.appbox.core.launcher.AppboxActivity;
 
 /**
  * Created by liangmayong on 2016/9/18.
@@ -234,22 +235,22 @@ public final class AppInstrumentation extends Instrumentation {
     public Activity newActivity(ClassLoader cl, String className, Intent intent)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         String activityName = "";
-        try {
+        if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
             activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-        } catch (Exception e) {
         }
         if (activityName != null && !"".equals(activityName)) {
-            ClassLoader pluginLoader = null;
+            ClassLoader classLoader = null;
             String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
             if (path != null && !"".equals(path)) {
-                pluginLoader = AppClassLoader.getClassloader(path);
+                classLoader = AppClassLoader.getClassloader(path);
             }
-            if (pluginLoader == null) {
-                pluginLoader = cl;
+            if (classLoader == null) {
+                classLoader = cl;
             }
             try {
-                return (Activity) pluginLoader.loadClass(activityName).newInstance();
+                return (Activity) classLoader.loadClass(activityName).newInstance();
             } catch (Exception e) {
+                Log.e("TAG", "path:" + path + "----------------------------", e);
             }
         }
         return mInstrumentation.newActivity(cl, className, intent);
@@ -380,7 +381,7 @@ public final class AppInstrumentation extends Instrumentation {
                     AppExtras.saveExtras(path, activityName, extras);
                 }
                 Intent newIntent = new Intent();
-                newIntent.setClassName(who, LauncherActivity.class.getName());
+                newIntent.setClassName(who, AppboxActivity.class.getName());
                 newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
                 newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
                 targetIntent = newIntent;
@@ -426,7 +427,7 @@ public final class AppInstrumentation extends Instrumentation {
                                                     Intent intent, int requestCode, Bundle options) {
         try {
             if (intent.getComponent() == null) {
-                intent.setClassName(who, LauncherActivity.class.getName());
+                intent.setClassName(who, AppboxActivity.class.getName());
             }
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
             return method.invoke(who, contextThread, token, target, intent, requestCode, options);

@@ -8,7 +8,7 @@ import android.util.Pair;
 
 import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppExtras;
-import com.liangmayong.appbox.core.launcher.LauncherService;
+import com.liangmayong.appbox.core.launcher.AppboxService;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -50,7 +50,7 @@ public class ActivityManagerHandler implements InvocationHandler {
                     AppExtras.saveExtras(path, serviceName, extras);
                 }
                 Intent newIntent = new Intent();
-                ComponentName componentName = new ComponentName(mContext.getPackageName(), LauncherService.class.getName());
+                ComponentName componentName = new ComponentName(mContext.getPackageName(), AppboxService.class.getName());
                 newIntent.setComponent(componentName);
                 newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, serviceName);
                 newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
@@ -61,10 +61,37 @@ public class ActivityManagerHandler implements InvocationHandler {
             args[integerIntentPair.first] = targetIntent;
             return method.invoke(mBase, args);
         } else if ("stopService".equals(method.getName())) {
+
+        } else if ("getContentProvider".equals(method.getName())) {
+//            Pair<Integer, String> integerIntentPair = foundFirstStringOfArgs(args);
+//            String name = integerIntentPair.second;
         }
         return method.invoke(mBase, args);
     }
 
+    /**
+     * foundFirstStringOfArgs
+     *
+     * @param args args
+     * @return pairs
+     */
+    private Pair<Integer, String> foundFirstStringOfArgs(Object... args) {
+        int index = 0;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof String) {
+                index = i;
+                break;
+            }
+        }
+        return Pair.create(index, (String) args[index]);
+    }
+
+    /**
+     * foundFirstIntentOfArgs
+     *
+     * @param args args
+     * @return pairs
+     */
     private Pair<Integer, Intent> foundFirstIntentOfArgs(Object... args) {
         int index = 0;
         for (int i = 0; i < args.length; i++) {

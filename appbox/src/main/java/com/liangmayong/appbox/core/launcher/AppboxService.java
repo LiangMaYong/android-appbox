@@ -13,7 +13,7 @@ import com.liangmayong.appbox.core.manager.AppServiceManager;
 /**
  * Created by LiangMaYong on 2016/9/19.
  */
-public class LauncherService extends Service {
+public class AppboxService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

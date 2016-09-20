@@ -288,7 +288,10 @@ public final class AppLifeCycle {
         }
         AppInfo info = AppInfo.get(target, path);
         if (info != null) {
-            target.setTitle(info.getLable());
+            try {
+                target.setTitle(info.getLable());
+            } catch (Exception e) {
+            }
             boolean flag = AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
             if (!flag) {
                 AppLoger.getDefualt().error("hook application fail");
@@ -301,7 +304,7 @@ public final class AppLifeCycle {
         }
 
         // with samsung
-        if (android.os.Build.MODEL.startsWith("GT")) {
+        //if (android.os.Build.MODEL.startsWith("GT")) {
             Window window = target.getWindow();
             try {
                 LayoutInflater originInflater = window.getLayoutInflater();
@@ -311,7 +314,7 @@ public final class AppLifeCycle {
                 }
             } catch (Throwable e) {
             }
-        }
+       // }
     }
 
     /**

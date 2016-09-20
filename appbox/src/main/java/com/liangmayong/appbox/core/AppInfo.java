@@ -173,7 +173,7 @@ public final class AppInfo {
      */
     public String getApplicationName() {
         String appClassName = getPackageInfo().applicationInfo.className;
-        if (appClassName == null || "".equals(appClassName)) {
+        if (appClassName == null || "".equals(appClassName) || "com.android.tools.fd.runtime.BootstrapApplication".equals(appClassName)) {
             appClassName = Application.class.getName();
         }
         return appClassName;

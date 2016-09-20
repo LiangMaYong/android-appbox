@@ -15,8 +15,8 @@ import com.liangmayong.appbox.core.AppInstrumentation;
 import com.liangmayong.appbox.core.AppReflect;
 import com.liangmayong.appbox.core.hook.ActivityManagerHandler;
 import com.liangmayong.appbox.core.hook.PackageManagerHandler;
-import com.liangmayong.appbox.core.launcher.LauncherActivity;
-import com.liangmayong.appbox.core.launcher.LauncherService;
+import com.liangmayong.appbox.core.launcher.AppboxActivity;
+import com.liangmayong.appbox.core.launcher.AppboxService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -107,7 +107,7 @@ public class AppboxCore {
         if (context == null) {
             return;
         }
-        Intent intent = new Intent(context, LauncherActivity.class);
+        Intent intent = new Intent(context, AppboxActivity.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, actName);
         if (extars != null) {
@@ -144,7 +144,7 @@ public class AppboxCore {
         if (activity == null) {
             return;
         }
-        Intent intent = new Intent(activity, LauncherActivity.class);
+        Intent intent = new Intent(activity, AppboxActivity.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, actName);
         if (extars != null) {
@@ -179,7 +179,7 @@ public class AppboxCore {
         if (context == null) {
             return null;
         }
-        Intent intent = new Intent(context, LauncherService.class);
+        Intent intent = new Intent(context, AppboxService.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
         if (extars != null) {
@@ -205,7 +205,7 @@ public class AppboxCore {
         if (activity == null) {
             return false;
         }
-        Intent intent = new Intent(activity, LauncherService.class);
+        Intent intent = new Intent(activity, AppboxService.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
         if (extars != null) {

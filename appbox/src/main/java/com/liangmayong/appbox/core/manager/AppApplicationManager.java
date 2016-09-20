@@ -47,6 +47,7 @@ public class AppApplicationManager {
                 application.onCreate();
                 AppLoger.getDefualt().error("create application:" + info.getApplicationName());
             } catch (Exception e) {
+                AppLoger.getDefualt().error("create application fail:" + info.getApplicationName(), e);
                 application = (Application) ctx;
             }
         }

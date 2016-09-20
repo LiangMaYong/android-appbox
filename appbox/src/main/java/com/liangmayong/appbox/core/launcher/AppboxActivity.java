@@ -7,11 +7,11 @@ import android.widget.Toast;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class LauncherActivity extends Activity {
+public class AppboxActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this,"LauncherActivity",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"AppboxActivity",Toast.LENGTH_SHORT).show();
     }
 }

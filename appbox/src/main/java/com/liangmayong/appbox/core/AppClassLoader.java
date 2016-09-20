@@ -43,7 +43,7 @@ public final class AppClassLoader {
      * @return classloader
      */
     public static ClassLoader getClassloader(String appPath) {
-        if (appPath == null || "".equals(appPath)) {
+        if (appPath == null || "".equals(appPath) || !(new File(appPath).exists())) {
             return AppClassLoader.class.getClassLoader();
         }
         ClassLoader classLoader = null;
@@ -103,14 +103,20 @@ public final class AppClassLoader {
                 } catch (Exception e) {
                 }
             }
+            Exception exception = null;
             try {
                 clazz = mClassLoader.loadClass(className);
                 if (clazz != null) {
                     return clazz;
                 }
             } catch (Exception e) {
+                exception = e;
             }
-            return super.loadClass(className);
+            try {
+                return super.loadClass(className);
+            } catch (Exception e) {
+            }
+            throw new ClassNotFoundException("not found class " + className, exception);
         }
     }
 
