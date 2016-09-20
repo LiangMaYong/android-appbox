@@ -237,7 +237,6 @@ public final class AppInstrumentation extends Instrumentation {
         try {
             activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
         } catch (Exception e) {
-            e.printStackTrace();
         }
         if (activityName != null && !"".equals(activityName)) {
             ClassLoader pluginLoader = null;
@@ -382,8 +381,8 @@ public final class AppInstrumentation extends Instrumentation {
                 }
                 Intent newIntent = new Intent();
                 newIntent.setClassName(who, LauncherActivity.class.getName());
-                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
                 newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
+                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
                 targetIntent = newIntent;
             } else {
                 targetIntent = intent;

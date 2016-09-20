@@ -3,13 +3,16 @@ package com.liangmayong.appbox.core.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Window;
 
 import com.liangmayong.appbox.core.app.listener.OnActivityLifeCycleListener;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -263,19 +266,36 @@ public final class AppLifeCycle {
             }
         }
         // resources
-        Resources resources = AppResources.getResources(target.getBaseContext(), path);
+        Resources resources = AppResources.getResources(path);
         if (resources != null) {
-            AppReflect.setField(target.getClass(), target, "mResources", resources);
+            boolean flag = AppReflect.setField(target.getClass(), target, "mResources", resources);
+            if (!flag) {
+                AppLoger.getDefualt().error("hook resources fail");
+            }
         }
         // context
         Context context = AppContext.get(target.getBaseContext(), path);
         if (context != null) {
-            AppReflect.setField(target.getClass(), target, "mBase", context);
+            boolean flag = AppReflect.setField(target.getClass(), target, "mBase", context);
+            if (!flag) {
+                AppLoger.getDefualt().error("hook context fail");
+            }
         }
 
         if (path != null && !"".equals(path)) {
             //TODO:replace application
         }
+        AppInfo info = AppInfo.get(target, path);
+        if (info != null) {
+            target.setTitle(info.getLable());
+            AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
+            ActivityInfo activityInfo = info.getActivityInfo(target.getClass().getName());
+            if (activityInfo != null) {
+                replaceActivityInfo(activityInfo, target);
+                replaceTheme(activityInfo, resources, target);
+            }
+        }
+
         // with samsung
         if (android.os.Build.MODEL.startsWith("GT")) {
             Window window = target.getWindow();
@@ -291,4 +311,55 @@ public final class AppLifeCycle {
         }
     }
 
+    /**
+     * replaceActivityInfo
+     *
+     * @param activityInfo activityInfo
+     * @param activity     activity
+     */
+    private static void replaceActivityInfo(ActivityInfo activityInfo, Activity activity) {
+        Field field_mActivityInfo;
+        try {
+            field_mActivityInfo = Activity.class.getDeclaredField("mActivityInfo");
+            field_mActivityInfo.setAccessible(true);
+        } catch (Exception e) {
+            return;
+        }
+        try {
+            field_mActivityInfo.set(activity, activityInfo);
+        } catch (Exception e) {
+        }
+    }
+
+
+    /**
+     * replaceTheme
+     *
+     * @param activityInfo activityInfo
+     * @param resources    resources
+     * @param target       target
+     */
+    private static void replaceTheme(ActivityInfo activityInfo, Resources resources, Activity target) {
+        boolean flag = false;
+        if (activityInfo != null) {
+            int resTheme = activityInfo.getThemeResource();
+            if (resTheme != 0) {
+                flag = true;
+                boolean hasNotSetTheme = true;
+                try {
+                    Object theme = AppReflect.getField(ContextThemeWrapper.class, target, "mTheme");
+                    hasNotSetTheme = theme == null ? true : false;
+                } catch (Exception e) {
+                }
+                if (hasNotSetTheme) {
+                    target.setTheme(resTheme);
+                }
+            }
+        }
+        if (!flag) {
+            Resources.Theme mTheme = resources.newTheme();
+            mTheme.setTo(target.getBaseContext().getTheme());
+            AppReflect.setField(target.getClass(), target, "mTheme", mTheme);
+        }
+    }
 }

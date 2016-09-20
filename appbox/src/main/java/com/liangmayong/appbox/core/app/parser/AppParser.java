@@ -12,6 +12,8 @@ import com.liangmayong.appbox.core.app.AppResources;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,16 @@ public final class AppParser {
     private AppParser() {
     }
 
+    // appinfo constructor
+    private static Constructor<AppInfo> mConstructor = null;
+
+    /**
+     * parserApp
+     *
+     * @param context context
+     * @param appPath appPath
+     * @return appinfo
+     */
     public static AppInfo parserApp(Context context, String appPath) {
         File file = new File(appPath);
         if (file.exists() && appPath.endsWith(".apk")) {
@@ -33,15 +45,22 @@ public final class AppParser {
                 PackageManager pm = context.getPackageManager();
                 PackageInfo pkg = pm.getPackageArchiveInfo(appPath, PackageManager.GET_ACTIVITIES);
                 if (pkg != null) {
-                    AppInfo appInfo = AppInfo.c;
-                    appInfo.setField("appPath", appPath);
-                    AssetManager assetManager = AppResources.getAssets(context, appPath);
-                    InputStream inputStream = assetManager.open("appbox.xml");
-                    List<Map<String, String>> mapLists = XmlParser.readXml(inputStream, "appbox");
-                    if (mapLists != null && !mapLists.isEmpty()) {
-                        appInfo.setField("configure", mapLists.get(0));
+                    if (mConstructor == null) {
+                        mConstructor = AppInfo.class.getDeclaredConstructor();
                     }
-                    appInfo.setField("packageInfo", pkg);
+                    mConstructor.setAccessible(true);
+                    AppInfo appInfo = mConstructor.newInstance();
+                    appInfo.setField("appPath", appPath);
+                    AssetManager assetManager = AppResources.getAssets(appPath);
+                    try {
+                        InputStream inputStream = assetManager.open("appbox.xml");
+                        List<Map<String, String>> mapLists = XmlParser.readXml(inputStream, "appbox");
+                        if (mapLists != null && !mapLists.isEmpty()) {
+                            appInfo.setField("configure", mapLists.get(0));
+                        }
+                    } catch (Exception e) {
+                        appInfo.setField("configure", new HashMap<String, String>());
+                    }
                     ApplicationInfo info = pkg.applicationInfo;
                     if (Build.VERSION.SDK_INT >= 8) {
                         info.sourceDir = appPath;
@@ -51,18 +70,23 @@ public final class AppParser {
                     if (applicationName != null && !"".equals(applicationName)) {
                         if (applicationName.startsWith(".")) {
                             info.className = pkg.packageName + applicationName;
+                        } else if (applicationName.indexOf(".") == -1) {
+                            info.className = pkg.packageName + "." + applicationName;
                         } else {
                             info.className = applicationName;
                         }
                     }
+                    appInfo.setField("packageInfo", pkg);
                     appInfo.setField("icon", info.loadIcon(pm));
                     appInfo.setField("intentFilters", ManifestParser.getIntentFilter(appPath));
                     appInfo.setField("lable", pm.getApplicationLabel(info).toString());
                     return appInfo;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+        return null;
     }
 
 }

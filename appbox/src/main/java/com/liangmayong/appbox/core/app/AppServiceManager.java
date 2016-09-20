@@ -31,6 +31,7 @@ public class AppServiceManager {
 
     public static Service handleCreateService(Context context, String appPath, String serviceName) {
         String key = "service_" + appPath + serviceName;
+
         if (STRING_SERVICE_MAP.containsKey(key)) {
             return STRING_SERVICE_MAP.get(key);
         }
@@ -46,7 +47,7 @@ public class AppServiceManager {
 
             AppReflect.setField(Service.class, service, "mClassName", serviceName);
             AppReflect.setField(Service.class, service, "mToken", new Binder());
-            AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(context, appPath, serviceName));
+            AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(context, appPath));
             AppReflect.setField(Service.class, service, "mStartCompatibility", ctx.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.ECLAIR);
 
             Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");

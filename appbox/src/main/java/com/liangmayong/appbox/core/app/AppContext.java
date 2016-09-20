@@ -67,7 +67,7 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getAssets();
         }
-        return AppResources.getAssets(getBaseContext(), appPath);
+        return AppResources.getAssets(appPath);
     }
 
     /**
@@ -80,7 +80,7 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getResources();
         }
-        return AppResources.getResources(getBaseContext(), appPath);
+        return AppResources.getResources(appPath);
     }
 
 

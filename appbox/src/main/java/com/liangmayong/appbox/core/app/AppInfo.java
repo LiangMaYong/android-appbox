@@ -22,13 +22,13 @@ public final class AppInfo {
     private static final Map<String, AppInfo> STRING_APP_INFO_MAP = new HashMap<String, AppInfo>();
 
     /**
-     * getAppInfo
+     * get
      *
      * @param context context
      * @param appPath appPath
      * @return info
      */
-    public static AppInfo getAppInfo(Context context, String appPath) {
+    public static AppInfo get(Context context, String appPath) {
         if (appPath == null || "".equals(appPath)) {
             return null;
         }
@@ -138,12 +138,12 @@ public final class AppInfo {
                     for (int i = 0; i < intentFilter.countCategories(); i++) {
                         String category = intentFilter.getCategory(i);
                         if (category.equals("android.intent.category.LAUNCHER")) {
-                            main = entry.getKey();
-                            return replaceClassName(main);
+                            return replaceClassName(entry.getKey());
                         }
                     }
                 }
             }
+            return "";
         }
         return replaceClassName(main);
     }
@@ -160,6 +160,8 @@ public final class AppInfo {
             newClassName = getPackageInfo().packageName + className;
         } else if (className.indexOf(".") == -1) {
             newClassName = getPackageInfo().packageName + "." + className;
+        } else {
+            newClassName = className;
         }
         return newClassName;
     }
@@ -231,4 +233,15 @@ public final class AppInfo {
         return AppReflect.setField(getClass(), this, fieldName, value);
     }
 
+    @Override
+    public String toString() {
+        return "AppInfo{" +
+                "lable='" + lable + '\'' +
+                ", packageInfo=" + packageInfo +
+                ", icon=" + icon +
+                ", appPath='" + appPath + '\'' +
+                ", intentFilters=" + intentFilters +
+                ", configure=" + configure +
+                '}';
+    }
 }

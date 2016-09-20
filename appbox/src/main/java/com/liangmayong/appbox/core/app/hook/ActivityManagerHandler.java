@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 
 import com.liangmayong.appbox.core.app.AppConstant;
@@ -35,7 +34,7 @@ public class ActivityManagerHandler implements InvocationHandler {
             Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
             Intent intent = integerIntentPair.second;
             Intent targetIntent = null;
-            if (intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
+            if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
                 String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
                 if (path == null) {
                     path = "";
@@ -62,7 +61,6 @@ public class ActivityManagerHandler implements InvocationHandler {
             args[integerIntentPair.first] = targetIntent;
             return method.invoke(mBase, args);
         } else if ("stopService".equals(method.getName())) {
-            Log.e(TAG, "stopService");
         }
         return method.invoke(mBase, args);
     }

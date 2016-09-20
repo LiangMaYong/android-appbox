@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -21,12 +22,12 @@ public final class AppNative {
     /**
      * getNativePath
      *
-     * @param pluginPath pluginPath
+     * @param appPath appPath
      * @return library Path
      */
-    public static String getNativePath(String pluginPath) {
+    public static String getNativePath(String appPath) {
         try {
-            String libraryDir = new File(pluginPath).getParent() + "/libs/";
+            String libraryDir = new File(appPath).getParent() + "/libs/" + encrypt(appPath);
             File file = new File(libraryDir);
             if (!file.exists()) {
                 file.mkdirs();
@@ -37,6 +38,31 @@ public final class AppNative {
         return "";
     }
 
+    /**
+     * MD5 encrypt
+     *
+     * @param str string
+     * @return encrypt string
+     */
+    private final static String encrypt(String str) {
+        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        try {
+            byte[] strTemp = str.getBytes();
+            MessageDigest mdTemp = MessageDigest.getInstance("MD5");
+            mdTemp.update(strTemp);
+            byte tmp[] = mdTemp.digest();
+            char strs[] = new char[16 * 2];
+            int k = 0;
+            for (int i = 0; i < 16; i++) {
+                byte byte0 = tmp[i];
+                strs[k++] = hexDigits[byte0 >>> 4 & 0xf];
+                strs[k++] = hexDigits[byte0 & 0xf];
+            }
+            return new String(strs).toUpperCase();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * copyPluginSO
