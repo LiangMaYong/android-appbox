@@ -1,6 +1,6 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
-import com.liangmayong.appbox.core.AppboxCore;
+import com.liangmayong.appbox.AppboxCore;
 
 import java.io.File;
 import java.util.HashMap;

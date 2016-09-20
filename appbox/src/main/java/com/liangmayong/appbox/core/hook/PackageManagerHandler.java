@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app.hook;
+package com.liangmayong.appbox.core.hook;
 
 import android.content.Context;
 

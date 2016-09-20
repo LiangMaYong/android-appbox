@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

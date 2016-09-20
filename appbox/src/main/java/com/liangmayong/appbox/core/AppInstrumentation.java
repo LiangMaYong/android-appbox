@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 
 import android.annotation.TargetApi;
@@ -18,7 +18,7 @@ import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.liangmayong.appbox.core.launchers.LauncherActivity;
+import com.liangmayong.appbox.core.launcher.LauncherActivity;
 
 /**
  * Created by liangmayong on 2016/9/18.

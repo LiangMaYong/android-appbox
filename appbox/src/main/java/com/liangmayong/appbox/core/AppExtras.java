@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 import android.os.Bundle;
 import android.os.Parcel;

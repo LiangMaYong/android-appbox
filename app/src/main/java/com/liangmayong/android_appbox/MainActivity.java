@@ -8,9 +8,9 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.liangmayong.appbox.core.AppboxCore;
-import com.liangmayong.appbox.core.app.AppInfo;
-import com.liangmayong.appbox.core.app.AppNative;
+import com.liangmayong.appbox.AppboxCore;
+import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppNative;
 
 import java.io.File;
 import java.io.FileOutputStream;

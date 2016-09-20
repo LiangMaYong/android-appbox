@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 /**
  * Created by liangmayong on 2016/9/18.

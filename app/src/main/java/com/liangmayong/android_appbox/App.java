@@ -2,7 +2,7 @@ package com.liangmayong.android_appbox;
 
 import android.app.Application;
 
-import com.liangmayong.appbox.core.AppboxCore;
+import com.liangmayong.appbox.AppboxCore;
 
 /**
  * Created by liangmayong on 2016/9/18.

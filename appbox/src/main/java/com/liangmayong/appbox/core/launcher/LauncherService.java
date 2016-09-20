@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.launchers;
+package com.liangmayong.appbox.core.launcher;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.liangmayong.appbox.core.app.AppConstant;
-import com.liangmayong.appbox.core.app.AppExtras;
-import com.liangmayong.appbox.core.app.AppServiceManager;
+import com.liangmayong.appbox.core.AppConstant;
+import com.liangmayong.appbox.core.AppExtras;
+import com.liangmayong.appbox.core.AppServiceManager;
 
 /**
  * Created by LiangMaYong on 2016/9/19.

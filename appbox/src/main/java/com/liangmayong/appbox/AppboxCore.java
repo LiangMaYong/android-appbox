@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core;
+package com.liangmayong.appbox;
 
 import android.app.Activity;
 import android.app.Application;
@@ -10,13 +10,13 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.liangmayong.appbox.core.app.AppConstant;
-import com.liangmayong.appbox.core.app.AppInstrumentation;
-import com.liangmayong.appbox.core.app.AppReflect;
-import com.liangmayong.appbox.core.app.hook.ActivityManagerHandler;
-import com.liangmayong.appbox.core.app.hook.PackageManagerHandler;
-import com.liangmayong.appbox.core.launchers.LauncherActivity;
-import com.liangmayong.appbox.core.launchers.LauncherService;
+import com.liangmayong.appbox.core.AppConstant;
+import com.liangmayong.appbox.core.AppInstrumentation;
+import com.liangmayong.appbox.core.AppReflect;
+import com.liangmayong.appbox.core.hook.ActivityManagerHandler;
+import com.liangmayong.appbox.core.hook.PackageManagerHandler;
+import com.liangmayong.appbox.core.launcher.LauncherActivity;
+import com.liangmayong.appbox.core.launcher.LauncherService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

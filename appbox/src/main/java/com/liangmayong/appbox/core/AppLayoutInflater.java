@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 import android.content.Context;
 import android.util.AttributeSet;

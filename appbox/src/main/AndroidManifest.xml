@@ -11,12 +11,12 @@
         android:supportsRtl="true">
         <!--seize a seat activity-->
         <activity
-            android:name=".core.launchers.LauncherActivity"
+            android:name=".core.launcher.LauncherActivity"
             android:enabled="true"
             android:exported="true" />
         <!--seize a seat service-->
         <service
-            android:name=".core.launchers.LauncherService"
+            android:name=".core.launcher.LauncherService"
             android:enabled="true"
             android:exported="true" />
     </application>

@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app.listener;
+package com.liangmayong.appbox.core.listener;
 
 import android.app.Activity;
 import android.os.Bundle;

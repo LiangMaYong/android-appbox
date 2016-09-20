@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.drawable.Drawable;
 
-import com.liangmayong.appbox.core.app.parser.AppParser;
+import com.liangmayong.appbox.core.parser.AppParser;
 
 import java.util.HashMap;
 import java.util.Map;

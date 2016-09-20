@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app.parser;
+package com.liangmayong.appbox.core.parser;
 
 import java.io.InputStream;
 import java.util.ArrayList;

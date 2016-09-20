@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app.parser;
+package com.liangmayong.appbox.core.parser;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -7,8 +7,8 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Build;
 
-import com.liangmayong.appbox.core.app.AppInfo;
-import com.liangmayong.appbox.core.app.AppResources;
+import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppResources;
 
 import java.io.File;
 import java.io.InputStream;

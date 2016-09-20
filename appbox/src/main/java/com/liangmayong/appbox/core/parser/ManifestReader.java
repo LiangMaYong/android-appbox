@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.liangmayong.appbox.core.app.parser;
+package com.liangmayong.appbox.core.parser;
 
 import android.util.TypedValue;
 

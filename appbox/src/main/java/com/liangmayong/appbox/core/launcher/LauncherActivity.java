@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.launchers;
+package com.liangmayong.appbox.core.launcher;
 
 import android.app.Activity;
 import android.os.Bundle;

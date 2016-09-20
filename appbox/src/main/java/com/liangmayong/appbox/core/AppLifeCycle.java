@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app;
+package com.liangmayong.appbox.core;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Window;
 
-import com.liangmayong.appbox.core.app.listener.OnActivityLifeCycleListener;
+import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

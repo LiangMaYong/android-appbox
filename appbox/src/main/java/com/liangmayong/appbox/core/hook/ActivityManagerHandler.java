@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.app.hook;
+package com.liangmayong.appbox.core.hook;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 
-import com.liangmayong.appbox.core.app.AppConstant;
-import com.liangmayong.appbox.core.app.AppExtras;
-import com.liangmayong.appbox.core.launchers.LauncherService;
+import com.liangmayong.appbox.core.AppConstant;
+import com.liangmayong.appbox.core.AppExtras;
+import com.liangmayong.appbox.core.launcher.LauncherService;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
