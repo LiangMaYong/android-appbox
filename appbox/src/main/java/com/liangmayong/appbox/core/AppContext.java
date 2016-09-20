@@ -8,6 +8,8 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.liangmayong.appbox.core.manager.AppApplicationManager;
+
 
 /**
  * Created by liangmayong on 2016/9/18.

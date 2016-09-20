@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,8 +27,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/imageSelect.apk";
+                AppInfo info = AppInfo.get(MainActivity.this, path);
+                if (info != null) {
+                    AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
+                }
+            }
+        });
         textView = (TextView) findViewById(R.id.textView);
-        startService(new Intent(this, MService.class));
+        //startService(new Intent(this, MService.class));
         //AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
         //AppboxCore.getInstance().startService(this, "", MService.class.getName());
         String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/imageSelect.apk";
@@ -48,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 //        }).start();
         // AppboxCore.getInstance().startActivity(this, path, "com.pili.pldroid.playerdemo.MainActivity");
         //AppboxCore.getInstance().bindService(this, "", MService.class.getName(), null, conn, Context.BIND_AUTO_CREATE);
-        // install();
+        //install();
     }
 
     public void install() {

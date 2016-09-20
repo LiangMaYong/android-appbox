@@ -1,8 +1,13 @@
-package com.liangmayong.appbox.core;
+package com.liangmayong.appbox.core.manager;
 
 import android.app.Application;
-import android.app.Service;
 import android.content.Context;
+
+import com.liangmayong.appbox.core.AppClassLoader;
+import com.liangmayong.appbox.core.AppContext;
+import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppLoger;
+import com.liangmayong.appbox.core.AppMethod;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -14,7 +19,7 @@ import java.util.Map;
  */
 public class AppApplicationManager {
 
-    private static final Map<String, Service> STRING_SERVICE_MAP = new HashMap<String, Service>();
+    private static final Map<String, Application> STRING_SERVICE_MAP = new HashMap<String, Application>();
 
     /**
      * handleCreateApplication
@@ -24,22 +29,29 @@ public class AppApplicationManager {
      * @return
      */
     public static Application handleCreateApplication(Context context, String appPath) {
+        String key = "application_" + appPath;
+        if (STRING_SERVICE_MAP.containsKey(key)) {
+            return STRING_SERVICE_MAP.get(key);
+        }
+        Application application = null;
         AppInfo info = AppInfo.get(context, appPath);
         if (info == null) {
-            return getHostApplication();
+            application = getHostApplication();
+        } else {
+            Context ctx = AppContext.get(context, appPath);
+            try {
+                application = (Application) AppClassLoader.getClassloader(info.getAppPath()).loadClass(info.getApplicationName())
+                        .newInstance();
+                AppMethod method = new AppMethod(Application.class, application, "attach", Context.class);
+                method.invoke(ctx);
+                application.onCreate();
+                AppLoger.getDefualt().error("create application:" + info.getApplicationName());
+            } catch (Exception e) {
+                application = (Application) ctx;
+            }
         }
-        Context ctx = AppContext.get(context, appPath);
-        try {
-            Application application = (Application) AppClassLoader.getClassloader(info.getAppPath()).loadClass(info.getApplicationName())
-                    .newInstance();
-            AppMethod method = new AppMethod(Application.class, application, "attach", Context.class);
-            method.invoke(ctx);
-            application.onCreate();
-            AppLoger.getDefualt().error("create application:" + info.getApplicationName());
-            return application;
-        } catch (Exception e) {
-        }
-        return (Application) ctx;
+        STRING_SERVICE_MAP.put(key, application);
+        return application;
     }
 
 

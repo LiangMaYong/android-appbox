@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppExtras;
-import com.liangmayong.appbox.core.AppServiceManager;
+import com.liangmayong.appbox.core.manager.AppServiceManager;
 
 /**
  * Created by LiangMaYong on 2016/9/19.
@@ -79,9 +79,9 @@ public class LauncherService extends Service {
             }
             Service service = AppServiceManager.handleCreateService(this, path, serviceName);
             service.onStart(intent, startId);
-            return service.onStartCommand(intent, flags, startId);
+            service.onStartCommand(intent, flags, startId);
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_REDELIVER_INTENT;
     }
 
     @Override

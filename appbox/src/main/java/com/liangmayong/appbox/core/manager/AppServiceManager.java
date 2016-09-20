@@ -1,9 +1,14 @@
-package com.liangmayong.appbox.core;
+package com.liangmayong.appbox.core.manager;
 
 import android.app.Service;
 import android.content.Context;
 import android.os.Binder;
 import android.os.Build;
+
+import com.liangmayong.appbox.core.AppClassLoader;
+import com.liangmayong.appbox.core.AppContext;
+import com.liangmayong.appbox.core.AppMethod;
+import com.liangmayong.appbox.core.AppReflect;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

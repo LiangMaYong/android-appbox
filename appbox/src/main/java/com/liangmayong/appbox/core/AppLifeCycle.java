@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Window;
 
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
+import com.liangmayong.appbox.core.manager.AppApplicationManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
