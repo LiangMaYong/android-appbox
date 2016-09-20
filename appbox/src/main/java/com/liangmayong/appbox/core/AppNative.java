@@ -26,8 +26,12 @@ public final class AppNative {
      * @return library Path
      */
     public static String getNativePath(String appPath) {
+        File appFile = new File(appPath);
+        if (!appFile.exists()) {
+            return "";
+        }
         try {
-            String libraryDir = new File(appPath).getParent() + "/libs/" + encrypt(appPath);
+            String libraryDir = appFile.getParent() + "/libs/" + encrypt(appPath);
             File file = new File(libraryDir);
             if (!file.exists()) {
                 file.mkdirs();
@@ -88,6 +92,9 @@ public final class AppNative {
      */
     private static void clearNativeLibrary(String appPath) {
         String targetDir = getNativePath(appPath);
+        if (targetDir == null || "".equals(targetDir)) {
+            return;
+        }
         File file = new File(targetDir);
         if (file.exists()) {
             file.delete();
