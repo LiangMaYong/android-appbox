@@ -37,7 +37,7 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getApplicationContext();
         }
-        return this;
+        return AppApplicationManager.handleCreateApplication(this, appPath);
     }
 
     /**
@@ -107,6 +107,9 @@ public final class AppContext extends Application {
      * @return context
      */
     public static Context get(Context base, String appPath) {
+        if (base instanceof AppContext) {
+            base = ((AppContext) base).getBaseContext();
+        }
         AppContext context = new AppContext(base);
         context.setAppPath(appPath);
         return context;

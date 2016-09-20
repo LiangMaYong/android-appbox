@@ -36,6 +36,7 @@ public class AppApplicationManager {
             method.invoke(ctx);
             application.onCreate();
             AppLoger.getDefualt().error("create application:" + info.getApplicationName());
+            return application;
         } catch (Exception e) {
         }
         return (Application) ctx;

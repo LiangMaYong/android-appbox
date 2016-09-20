@@ -288,7 +288,10 @@ public final class AppLifeCycle {
         AppInfo info = AppInfo.get(target, path);
         if (info != null) {
             target.setTitle(info.getLable());
-            AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
+            boolean flag = AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
+            if (!flag) {
+                AppLoger.getDefualt().error("hook application fail");
+            }
             ActivityInfo activityInfo = info.getActivityInfo(target.getClass().getName());
             if (activityInfo != null) {
                 replaceActivityInfo(activityInfo, target);
@@ -306,7 +309,6 @@ public final class AppLifeCycle {
                             new AppLayoutInflater(originInflater));
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
             }
         }
     }

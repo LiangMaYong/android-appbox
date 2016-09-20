@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         startService(new Intent(this, MService.class));
         //AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
         //AppboxCore.getInstance().startService(this, "", MService.class.getName());
-        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/1474354772142.apk";
+        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/imageSelect.apk";
         AppInfo info = AppInfo.get(MainActivity.this, path);
         if (info != null) {
             Log.e("TAG", info + "");
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 //        }).start();
         // AppboxCore.getInstance().startActivity(this, path, "com.pili.pldroid.playerdemo.MainActivity");
         //AppboxCore.getInstance().bindService(this, "", MService.class.getName(), null, conn, Context.BIND_AUTO_CREATE);
-//       install();
+        // install();
     }
 
     public void install() {
@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 OutputStream out = null;
                 try {
-                    InputStream inputStream = getAssets().open("plugins/PLPlayer.apk");
+                    InputStream inputStream = getAssets().open("plugins/imageSelect.apk");
                     File dexTemp = getDir("appbox", Context.MODE_PRIVATE);
                     dexTemp.mkdirs();
-                    File pluginTemp = new File(dexTemp, System.currentTimeMillis() + ".apk");
+                    File pluginTemp = new File(dexTemp, "imageSelect" + ".apk");
                     long savefile_time = System.currentTimeMillis();
                     if (!pluginTemp.exists()) {
                         out = new FileOutputStream(pluginTemp);
