@@ -1,19 +1,12 @@
 package com.liangmayong.appbox.core;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.Window;
 
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
-import com.liangmayong.appbox.core.manager.AppApplicationManager;
+import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
+import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +22,6 @@ public final class AppLifeCycle {
 
     //currentActivity
     private static Activity currentActivity = null;
-    // currentPath
-    private static String currentPath = "";
 
     /**
      * getCurrentActivity
@@ -127,8 +118,8 @@ public final class AppLifeCycle {
         if (!ACTIVITIES.contains(target)) {
             ACTIVITIES.add(target);
         }
-        replaceActivity(target);
         String appPath = getAppPathByActivity(target);
+        AppActivityModifier.modify(target, appPath);
         if (appPath != null && !"".equals(appPath)) {
             if (STRING_ACTIVITY_LIST_MAP.containsKey(appPath)) {
                 STRING_ACTIVITY_LIST_MAP.get(appPath).add(target);
@@ -246,125 +237,5 @@ public final class AppLifeCycle {
             }
         }
         currentActivity = target;
-    }
-
-    private static void replaceActivity(Activity target) {
-        String path = getAppPathByActivity(target);
-        Bundle bundle = AppExtras.getExtras(path, target.getClass().getName());
-        if (bundle != null) {
-            Intent intent = new Intent();
-            intent.putExtras(bundle);
-            target.setIntent(intent);
-        }
-        if (!currentPath.equals(path)) {
-            currentPath = path == null ? "" : path;
-            //clear LayoutInflater cache
-            try {
-                Object sConstructorMap = AppReflect.getField(LayoutInflater.class, null, "sConstructorMap");
-                AppMethod method = new AppMethod(sConstructorMap.getClass(), sConstructorMap, "clear");
-                method.invoke();
-            } catch (Exception e) {
-            }
-        }
-        // resources
-        Resources resources = AppResources.getResources(path);
-        if (resources != null) {
-            boolean flag = AppReflect.setField(target.getClass(), target, "mResources", resources);
-            if (!flag) {
-                AppLoger.getDefualt().error("hook resources fail");
-            }
-        }
-        // context
-        Context context = AppContext.get(target.getBaseContext(), path);
-        if (context != null) {
-            boolean flag = AppReflect.setField(target.getClass(), target, "mBase", context);
-            if (!flag) {
-                AppLoger.getDefualt().error("hook context fail");
-            }
-        }
-
-        if (path != null && !"".equals(path)) {
-            AppInfo info = AppInfo.get(target, path);
-            if (info != null) {
-                try {
-                    target.setTitle(info.getLable());
-                } catch (Exception e) {
-                }
-                boolean flag = AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
-                if (!flag) {
-                    AppLoger.getDefualt().error("hook application fail");
-                }
-                ActivityInfo activityInfo = info.getActivityInfo(target.getClass().getName());
-                if (activityInfo != null) {
-                    replaceActivityInfo(activityInfo, target);
-                    replaceTheme(activityInfo, resources, target);
-                }
-            }
-        }
-
-        // with samsung
-        if (android.os.Build.MODEL.startsWith("GT")) {
-            Window window = target.getWindow();
-            try {
-                LayoutInflater originInflater = window.getLayoutInflater();
-                if (!(originInflater instanceof AppLayoutInflater)) {
-                    AppReflect.setField(window.getClass(), window, "mLayoutInflater",
-                            new AppLayoutInflater(originInflater));
-                }
-            } catch (Throwable e) {
-            }
-        }
-    }
-
-    /**
-     * replaceActivityInfo
-     *
-     * @param activityInfo activityInfo
-     * @param activity     activity
-     */
-    private static void replaceActivityInfo(ActivityInfo activityInfo, Activity activity) {
-        Field field_mActivityInfo;
-        try {
-            field_mActivityInfo = Activity.class.getDeclaredField("mActivityInfo");
-            field_mActivityInfo.setAccessible(true);
-        } catch (Exception e) {
-            return;
-        }
-        try {
-            field_mActivityInfo.set(activity, activityInfo);
-        } catch (Exception e) {
-        }
-    }
-
-
-    /**
-     * replaceTheme
-     *
-     * @param activityInfo activityInfo
-     * @param resources    resources
-     * @param target       target
-     */
-    private static void replaceTheme(ActivityInfo activityInfo, Resources resources, Activity target) {
-        boolean flag = false;
-        if (activityInfo != null) {
-            int resTheme = activityInfo.getThemeResource();
-            if (resTheme != 0) {
-                flag = true;
-                boolean hasNotSetTheme = true;
-                try {
-                    Object theme = AppReflect.getField(ContextThemeWrapper.class, target, "mTheme");
-                    hasNotSetTheme = theme == null ? true : false;
-                } catch (Exception e) {
-                }
-                if (hasNotSetTheme) {
-                    target.setTheme(resTheme);
-                }
-            }
-        }
-        if (!flag) {
-            Resources.Theme mTheme = resources.newTheme();
-            mTheme.setTo(target.getBaseContext().getTheme());
-            AppReflect.setField(target.getClass(), target, "mTheme", mTheme);
-        }
     }
 }

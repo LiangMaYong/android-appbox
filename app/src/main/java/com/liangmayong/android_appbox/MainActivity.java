@@ -1,16 +1,21 @@
 package com.liangmayong.android_appbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liangmayong.appbox.AppboxCore;
+import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
+import com.liangmayong.appbox.core.AppResources;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,13 +41,15 @@ public class MainActivity extends AppCompatActivity {
                     AppInfo info = AppInfo.get(MainActivity.this, path);
                     Log.e("TAG", info.getMain());
                     if (info != null) {
+                        //View vies = LayoutInflater.from(AppContext.get(MainActivity.this, info.getAppPath())).inflate(AppResources.getResources(info.getAppPath()).getLayout(2130968606), (ViewGroup) getWindow().getDecorView());
+                        //setContentView(vies);
                         AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
                     }
                 }
             }
         });
         textView = (TextView) findViewById(R.id.textView);
-        //startService(new Intent(this, MService.class));
+        startService(new Intent(this, MService.class));
         //AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
         //AppboxCore.getInstance().startService(this, "", MService.class.getName());
         String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
@@ -51,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
             if (info != null) {
                 Log.e("TAG", info + "");
                 //Toast.makeText(this, info + "", Toast.LENGTH_SHORT).show();
-                AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
+//                AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
                 imageView.setImageDrawable(info.getIcon());
                 textView.setText(info.getLable());
-            }else{
+            } else {
                 install();
             }
         } else {

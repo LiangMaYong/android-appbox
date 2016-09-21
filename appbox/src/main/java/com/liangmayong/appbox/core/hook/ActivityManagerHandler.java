@@ -63,8 +63,6 @@ public class ActivityManagerHandler implements InvocationHandler {
         } else if ("stopService".equals(method.getName())) {
 
         } else if ("getContentProvider".equals(method.getName())) {
-//            Pair<Integer, String> integerIntentPair = foundFirstStringOfArgs(args);
-//            String name = integerIntentPair.second;
         }
         return method.invoke(mBase, args);
     }

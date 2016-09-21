@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 
-import com.liangmayong.appbox.core.manager.AppApplicationManager;
+import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
 
 /**
@@ -33,6 +32,7 @@ public final class AppContext extends Application {
             method.invoke(base);
         } catch (Exception e) {
         }
+        AppContextModifier.setOuterContext(base, this);
     }
 
     @Override
@@ -40,7 +40,8 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getApplicationContext();
         }
-        return AppApplicationManager.handleCreateApplication(this, appPath);
+        return this;
+        // return AppApplicationManager.handleCreateApplication(this, appPath);
     }
 
     /**

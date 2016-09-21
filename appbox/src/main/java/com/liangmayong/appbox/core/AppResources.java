@@ -76,5 +76,4 @@ public final class AppResources extends Resources {
     private AppResources(AssetManager assets, DisplayMetrics metrics, Configuration config) {
         super(assets, metrics, config);
     }
-
 }
