@@ -136,9 +136,9 @@ public final class AppContext extends Application {
 
     @Override
     public Object getSystemService(String name) {
-        if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
-            return new AppLayoutInflater((LayoutInflater) super.getSystemService(name));
-        }
+//        if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
+//            return new AppLayoutInflater((LayoutInflater) super.getSystemService(name));
+//        }
         return super.getSystemService(name);
     }
 

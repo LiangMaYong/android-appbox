@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     TextView textView;
 
-    private String appName = "androidbase.apk";
+    private String appName = "PLPlayer.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
                 imageView.setImageDrawable(info.getIcon());
                 textView.setText(info.getLable());
+            }else{
+                install();
             }
         } else {
             install();
