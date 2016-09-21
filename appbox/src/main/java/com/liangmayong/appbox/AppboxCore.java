@@ -7,20 +7,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.liangmayong.appbox.core.AppConstant;
+import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppInstrumentation;
 import com.liangmayong.appbox.core.AppReflect;
-import com.liangmayong.appbox.core.hook.ActivityManagerHandler;
-import com.liangmayong.appbox.core.hook.PackageManagerHandler;
+import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.launcher.AppboxActivity;
 import com.liangmayong.appbox.core.launcher.AppboxService;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * Created by LiangMaYong on 2016/9/18.
@@ -62,8 +57,7 @@ public class AppboxCore {
         if (application == null) {
             return false;
         }
-        hookActivityManagerNative(application);
-        hookPackageManager(application);
+        AppHookHandler.hook(application);
         try {
             Object loadedApk = AppReflect.getField(Application.class, application, "mLoadedApk");
             if (loadedApk != null) {
@@ -144,7 +138,8 @@ public class AppboxCore {
         if (activity == null) {
             return;
         }
-        Intent intent = new Intent(activity, AppboxActivity.class);
+        Intent intent = new Intent();
+        intent.setClassName(AppContext.get(activity, path), actName);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, actName);
         if (extars != null) {
@@ -222,65 +217,6 @@ public class AppboxCore {
      */
     public void unbindService(Activity activity, ServiceConnection conn) {
         activity.unbindService(conn);
-    }
-
-    /**
-     * hookActivityManagerNative
-     *
-     * @param application application
-     */
-    private void hookActivityManagerNative(Application application) {
-        try {
-            Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
-
-            Field gDefaultField = activityManagerNativeClass.getDeclaredField("gDefault");
-            gDefaultField.setAccessible(true);
-
-            Object gDefault = gDefaultField.get(null);
-
-            Class<?> singleton = Class.forName("android.util.Singleton");
-            Field mInstanceField = singleton.getDeclaredField("mInstance");
-            mInstanceField.setAccessible(true);
-
-            Object rawIActivityManager = mInstanceField.get(gDefault);
-
-            Class<?> iActivityManagerInterface = Class.forName("android.app.IActivityManager");
-            Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[]{iActivityManagerInterface}, new ActivityManagerHandler(application, rawIActivityManager));
-            mInstanceField.set(gDefault, proxy);
-        } catch (Exception e) {
-        }
-    }
-
-
-    /**
-     * hookPackageManager
-     *
-     * @param application application
-     */
-    private void hookPackageManager(Application application) {
-        try {
-            Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-            Method currentActivityThreadMethod = activityThreadClass.getDeclaredMethod("currentActivityThread");
-            Object currentActivityThread = currentActivityThreadMethod.invoke(null);
-
-            Field sPackageManagerField = activityThreadClass.getDeclaredField("sPackageManager");
-            sPackageManagerField.setAccessible(true);
-            Object sPackageManager = sPackageManagerField.get(currentActivityThread);
-
-            Class<?> iPackageManagerInterface = Class.forName("android.content.pm.IPackageManager");
-            Object proxy = Proxy.newProxyInstance(iPackageManagerInterface.getClassLoader(),
-                    new Class<?>[]{iPackageManagerInterface},
-                    new PackageManagerHandler(application, sPackageManager));
-
-            sPackageManagerField.set(currentActivityThread, proxy);
-
-            PackageManager pm = application.getPackageManager();
-            Field mPmField = pm.getClass().getDeclaredField("mPM");
-            mPmField.setAccessible(true);
-            mPmField.set(pm, proxy);
-        } catch (Exception e) {
-        }
     }
 
     /**

@@ -15,7 +15,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -234,24 +233,9 @@ public final class AppInstrumentation extends Instrumentation {
     @Override
     public Activity newActivity(ClassLoader cl, String className, Intent intent)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        String activityName = "";
-        if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
-            activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-        }
-        if (activityName != null && !"".equals(activityName)) {
-            ClassLoader classLoader = null;
-            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path != null && !"".equals(path)) {
-                classLoader = AppClassLoader.getClassloader(path);
-            }
-            if (classLoader == null) {
-                classLoader = cl;
-            }
-            try {
-                return (Activity) classLoader.loadClass(activityName).newInstance();
-            } catch (Exception e) {
-                Log.e("TAG", "path:" + path + "----------------------------", e);
-            }
+        Activity activity = AppLifeCycle.newActivity(cl, className, intent);
+        if (activity != null) {
+            return activity;
         }
         return mInstrumentation.newActivity(cl, className, intent);
     }
@@ -360,39 +344,11 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                             Intent intent, int requestCode, Bundle options) {
-        try {
-            Intent targetIntent = null;
-            if (intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
-                String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-                if (path == null || "".equals(path)) {
-                    path = target.getIntent().getStringExtra(AppConstant.INTENT_APP_PATH);
-                    if (path == null) {
-                        path = "";
-                    }
-                }
-                String activityName = "";
-                if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
-                    activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-                } else {
-                    activityName = intent.getComponent().getClassName();
-                }
-                Bundle extras = intent.getExtras();
-                if (extras != null) {
-                    AppExtras.saveExtras(path, activityName, extras);
-                }
-                Intent newIntent = new Intent();
-                newIntent.setClassName(who, AppboxActivity.class.getName());
-                newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
-                targetIntent = newIntent;
-            } else {
-                targetIntent = intent;
-            }
-            return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
-        } catch (Exception e) {
-            AppLoger.getDefualt().error("The execStartActivity fail", e);
+        Intent targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent);
+        if (targetIntent == null) {
+            targetIntent = intent;
         }
-        return null;
+        return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
     }
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment fragment,
@@ -411,18 +367,6 @@ public final class AppInstrumentation extends Instrumentation {
         }
     }
 
-    /**
-     * proxyExecStartActivity
-     *
-     * @param who           who
-     * @param contextThread contextThread
-     * @param token         token
-     * @param target        target
-     * @param intent        intent
-     * @param requestCode   requestCode
-     * @param options       options
-     * @return ActivityResult
-     */
     protected ActivityResult proxyExecStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                                     Intent intent, int requestCode, Bundle options) {
         try {

@@ -1,11 +1,14 @@
 package com.liangmayong.appbox.core;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.liangmayong.appbox.core.launcher.AppboxActivity;
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
-import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,5 +240,59 @@ public final class AppLifeCycle {
             }
         }
         currentActivity = target;
+    }
+
+    protected static Intent handlerStartActivity(Context who, Activity target, Intent intent) {
+        Intent targetIntent = null;
+        if (intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
+            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
+            if (path == null || "".equals(path)) {
+                path = target.getIntent().getStringExtra(AppConstant.INTENT_APP_PATH);
+                if (path == null) {
+                    path = "";
+                }
+            }
+            String activityName = "";
+            if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
+                activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
+            } else {
+                activityName = intent.getComponent().getClassName();
+            }
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                AppExtras.saveExtras(path, activityName, extras);
+            }
+            Intent newIntent = new Intent();
+            newIntent.setClassName(who, AppboxActivity.class.getName());
+            newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
+            newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
+            targetIntent = newIntent;
+        } else {
+            targetIntent = intent;
+        }
+        return targetIntent;
+    }
+
+    protected static Activity newActivity(ClassLoader cl, String className, Intent intent) {
+        String activityName = "";
+        if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
+            activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
+        }
+        if (activityName != null && !"".equals(activityName)) {
+            ClassLoader classLoader = null;
+            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
+            if (path != null && !"".equals(path)) {
+                classLoader = AppClassLoader.getClassloader(path);
+            }
+            if (classLoader == null) {
+                classLoader = cl;
+            }
+            try {
+                return (Activity) classLoader.loadClass(activityName).newInstance();
+            } catch (Exception e) {
+                Log.e("TAG", "path:" + path + "----------------------------", e);
+            }
+        }
+        return null;
     }
 }

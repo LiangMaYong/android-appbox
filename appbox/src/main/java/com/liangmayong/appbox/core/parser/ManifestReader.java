@@ -738,7 +738,7 @@ public final class ManifestReader {
 
                 int chunkType;
                 if (event == START_DOCUMENT) {
-                    // Fake event, see CHUNK_XML_START_TAG handler.
+                    // Fake event, see CHUNK_XML_START_TAG hook.
                     chunkType = CHUNK_XML_START_TAG;
                 } else {
                     chunkType = m_reader.readInt();
