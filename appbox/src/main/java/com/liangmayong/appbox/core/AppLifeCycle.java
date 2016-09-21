@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 import com.liangmayong.appbox.core.launcher.AppboxActivity;
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
+import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +125,7 @@ public final class AppLifeCycle {
         }
         String appPath = getAppPathByActivity(target);
         AppActivityModifier.modify(target, appPath);
+        //Log.e("TAG", LayoutInflater.from(target).getContext().getClass().getName());
         if (appPath != null && !"".equals(appPath)) {
             if (STRING_ACTIVITY_LIST_MAP.containsKey(appPath)) {
                 STRING_ACTIVITY_LIST_MAP.get(appPath).add(target);
@@ -290,7 +293,6 @@ public final class AppLifeCycle {
             try {
                 return (Activity) classLoader.loadClass(activityName).newInstance();
             } catch (Exception e) {
-                Log.e("TAG", "path:" + path + "----------------------------", e);
             }
         }
         return null;

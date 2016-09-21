@@ -1,7 +1,6 @@
 package com.liangmayong.appbox.core.manager;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.IntentFilter;
 
 import com.liangmayong.appbox.core.AppClassLoader;
@@ -24,14 +23,14 @@ public final class AppReceiverManager {
     /**
      * unregisterReceiver
      *
-     * @param context context
+     * @param appPath appPath
      */
-    public static void unregisterReceiver(Context context, String appPath) {
+    public static void unregisterReceiver(String appPath) {
         String key = "receiver_" + appPath;
         if (STRING_LINKED_LIST_HASH_MAP.containsKey(key)) {
             LinkedList<BroadcastReceiver> receivers = STRING_LINKED_LIST_HASH_MAP.get(key);
             for (int i = 0; i < receivers.size(); i++) {
-                AppApplicationManager.handleCreateApplication(context, appPath).unregisterReceiver(receivers.get(i));
+                AppApplicationManager.handleCreateApplication(appPath).unregisterReceiver(receivers.get(i));
             }
             STRING_LINKED_LIST_HASH_MAP.remove(key);
         }
@@ -40,14 +39,14 @@ public final class AppReceiverManager {
     /**
      * registerReceiver
      *
-     * @param context context
+     * @param appPath appPath
      */
-    public static void registerReceiver(Context context, String appPath) {
+    public static void registerReceiver(String appPath) {
         String key = "receiver_" + appPath;
         if (STRING_LINKED_LIST_HASH_MAP.containsKey(key)) {
             return;
         }
-        AppInfo info = AppInfo.get(context, appPath);
+        AppInfo info = AppInfo.get(AppApplicationManager.getHostApplication(), appPath);
         if (info != null) {
             Map<String, IntentFilter> filters = info.getIntentFilters();
             LinkedList<BroadcastReceiver> receivers = new LinkedList<BroadcastReceiver>();
@@ -58,7 +57,7 @@ public final class AppReceiverManager {
                     try {
                         BroadcastReceiver broadcastReceiver = (BroadcastReceiver) clazz.newInstance();
                         receivers.add(broadcastReceiver);
-                        AppApplicationManager.handleCreateApplication(context, appPath).registerReceiver(broadcastReceiver, entry.getValue());
+                        AppApplicationManager.handleCreateApplication(appPath).registerReceiver(broadcastReceiver, entry.getValue());
                     } catch (Exception e) {
                     }
                 }

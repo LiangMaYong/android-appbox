@@ -11,9 +11,9 @@ import android.os.Bundle;
 
 import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppContext;
+import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.AppInstrumentation;
 import com.liangmayong.appbox.core.AppReflect;
-import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.launcher.AppboxActivity;
 import com.liangmayong.appbox.core.launcher.AppboxService;
 
@@ -208,6 +208,7 @@ public class AppboxCore {
         }
         return activity.bindService(intent, conn, flags);
     }
+
 
     /**
      * unbindService

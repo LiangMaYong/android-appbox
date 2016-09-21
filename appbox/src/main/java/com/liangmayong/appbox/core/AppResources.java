@@ -20,6 +20,18 @@ public final class AppResources extends Resources {
     private static Method ADD_ASSET_PATH_METHOD = null;
 
     /**
+     * remove
+     *
+     * @param appPath appPath
+     */
+    public static void remove(String appPath) {
+        String key = "resources_" + appPath;
+        if (STRING_RESOURCES_HASH_MAP.containsKey(key)) {
+            STRING_RESOURCES_HASH_MAP.remove(key);
+        }
+    }
+
+    /**
      * getResources
      *
      * @param appPath appPath

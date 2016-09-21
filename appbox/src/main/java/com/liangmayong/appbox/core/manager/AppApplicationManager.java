@@ -22,13 +22,25 @@ public class AppApplicationManager {
     private static final Map<String, Application> STRING_SERVICE_MAP = new HashMap<String, Application>();
 
     /**
+     * remove
+     *
+     * @param appPath appPath
+     */
+    public static void remove(String appPath) {
+        String key = "application_" + appPath;
+        if (STRING_SERVICE_MAP.containsKey(key)) {
+            STRING_SERVICE_MAP.remove(key);
+        }
+    }
+
+    /**
      * handleCreateApplication
      *
-     * @param context context
      * @param appPath appPath
      * @return
      */
-    public static Application handleCreateApplication(Context context, String appPath) {
+    public static Application handleCreateApplication(String appPath) {
+        Context context = getHostApplication();
         String key = "application_" + appPath;
         if (STRING_SERVICE_MAP.containsKey(key)) {
             return STRING_SERVICE_MAP.get(key);
@@ -45,7 +57,7 @@ public class AppApplicationManager {
                 AppMethod method = new AppMethod(Application.class, application, "attach", Context.class);
                 method.invoke(ctx);
                 // register receiver
-                AppReceiverManager.registerReceiver(context, appPath);
+                AppReceiverManager.registerReceiver(appPath);
                 application.onCreate();
                 AppLoger.getDefualt().error("create application:" + info.getApplicationName());
             } catch (Exception e) {

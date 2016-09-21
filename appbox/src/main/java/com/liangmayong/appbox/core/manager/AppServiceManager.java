@@ -21,6 +21,20 @@ public class AppServiceManager {
 
     private static final Map<String, Service> STRING_SERVICE_MAP = new HashMap<String, Service>();
 
+    /**
+     * remove
+     *
+     * @param appPath appPath
+     */
+    public static void remove(String appPath) {
+        for (Map.Entry<String, Service> entry : STRING_SERVICE_MAP.entrySet()) {
+            if (entry.getKey().startsWith("service_" + appPath)) {
+                STRING_SERVICE_MAP.remove(entry.getKey());
+                entry.getValue().onDestroy();
+            }
+        }
+    }
+
     public static void onDestroy() {
         for (Map.Entry<String, Service> entry : STRING_SERVICE_MAP.entrySet()) {
             entry.getValue().onDestroy();
@@ -52,7 +66,7 @@ public class AppServiceManager {
 
             AppReflect.setField(Service.class, service, "mClassName", serviceName);
             AppReflect.setField(Service.class, service, "mToken", new Binder());
-            AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(context, appPath));
+            AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(appPath));
             AppReflect.setField(Service.class, service, "mStartCompatibility", ctx.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.ECLAIR);
 
             Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");

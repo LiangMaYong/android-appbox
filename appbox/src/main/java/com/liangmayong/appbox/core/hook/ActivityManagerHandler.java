@@ -32,9 +32,9 @@ public class ActivityManagerHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("startActivity".equals(method.getName())) {
-            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
-            Intent intent = integerIntentPair.second;
-            Log.e("TAG", intent.getExtras() + "");
+//            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
+//            Intent intent = integerIntentPair.second;
+//            Log.e("TAG", intent.getExtras() + "");
         } else if ("startService".equals(method.getName()) || "bindService".equals(method.getName())) {
             Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
             Intent intent = integerIntentPair.second;

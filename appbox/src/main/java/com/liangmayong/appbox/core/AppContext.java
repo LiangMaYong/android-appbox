@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 
+import com.liangmayong.appbox.core.manager.AppApplicationManager;
 import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
 
@@ -20,6 +22,23 @@ public final class AppContext extends Application {
     private String appPath = "";
     // plugin classloader
     private ClassLoader classLoader = null;
+
+    /**
+     * get
+     *
+     * @param base    base
+     * @param appPath appPath
+     * @return context
+     */
+    public static Context get(Context base, String appPath) {
+        if (base instanceof AppContext) {
+            base = ((AppContext) base).getBaseContext();
+        }
+        AppContext context = new AppContext(base);
+        context.setAppPath(appPath);
+        AppContextModifier.setOuterContext(base, context);
+        return context;
+    }
 
     /**
      * AppContext
@@ -40,8 +59,8 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getApplicationContext();
         }
-        return this;
-        // return AppApplicationManager.handleCreateApplication(this, appPath);
+        //return this;
+        return AppApplicationManager.handleCreateApplication(appPath);
     }
 
     /**
@@ -103,43 +122,17 @@ public final class AppContext extends Application {
         }
     }
 
-    /**
-     * get
-     *
-     * @param base    base
-     * @param appPath appPath
-     * @return context
-     */
-    public static Context get(Context base, String appPath) {
-        if (base instanceof AppContext) {
-            base = ((AppContext) base).getBaseContext();
-        }
-        AppContext context = new AppContext(base);
-        context.setAppPath(appPath);
-        return context;
-    }
-
     @Override
     public void startActivity(Intent intent) {
         startActivity(intent, null);
     }
 
-    @Override
-    public void startActivity(Intent intent, Bundle options) {
-        if (!intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
-            intent.putExtra(AppConstant.INTENT_APP_PATH, appPath);
-            if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH) && intent.getComponent() != null) {
-                intent.putExtra(AppConstant.INTENT_APP_LAUNCH, intent.getComponent().getClassName());
-            }
-        }
-        super.startActivity(intent, options);
-    }
 
     @Override
     public Object getSystemService(String name) {
-//        if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
-//            return new AppLayoutInflater((LayoutInflater) super.getSystemService(name));
-//        }
+        if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
+            return new AppLayoutInflater((LayoutInflater) super.getSystemService(name));
+        }
         return super.getSystemService(name);
     }
 
@@ -168,6 +161,16 @@ public final class AppContext extends Application {
         }
     }
 
+    @Override
+    public void startActivity(Intent intent, Bundle options) {
+        if (!intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
+            intent.putExtra(AppConstant.INTENT_APP_PATH, appPath);
+            if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH) && intent.getComponent() != null) {
+                intent.putExtra(AppConstant.INTENT_APP_LAUNCH, intent.getComponent().getClassName());
+            }
+        }
+        super.startActivity(intent, options);
+    }
 
     @Override
     public ComponentName startService(Intent service) {

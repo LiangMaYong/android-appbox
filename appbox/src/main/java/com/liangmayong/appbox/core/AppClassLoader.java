@@ -37,6 +37,17 @@ public final class AppClassLoader {
     }
 
     /**
+     * remove
+     *
+     * @param appPath appPath
+     */
+    public static void remove(String appPath) {
+        if (CLASS_LOADER_MAP.containsKey(appPath)) {
+            CLASS_LOADER_MAP.remove(appPath);
+        }
+    }
+
+    /**
      * getClassloader
      *
      * @param appPath appPath

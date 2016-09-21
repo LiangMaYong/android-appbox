@@ -14,10 +14,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.Window;
 
 import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppExtras;
 import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppLayoutInflater;
 import com.liangmayong.appbox.core.AppLoger;
 import com.liangmayong.appbox.core.AppReflect;
 import com.liangmayong.appbox.core.AppResources;
@@ -71,7 +74,7 @@ public class AppActivityModifier {
                     target.setTitle(info.getLable());
                 } catch (Exception e) {
                 }
-                boolean flag = AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(target, info.getAppPath()));
+                boolean flag = AppReflect.setField(target.getClass(), target, "mApplication", AppApplicationManager.handleCreateApplication(info.getAppPath()));
                 if (!flag) {
                     AppLoger.getDefualt().error("hook application fail");
                 }
@@ -99,16 +102,16 @@ public class AppActivityModifier {
             }
         }
 
-//        Window window = target.getWindow();
-//        LayoutInflater originInflater = target.getLayoutInflater();
-//        if (!(originInflater instanceof AppLayoutInflater)) {
-//            boolean flag = AppReflect.setField(window.getClass(), window, "mLayoutInflater",
-//                    new AppLayoutInflater(originInflater));
-//            if (!flag) {
-//                AppLoger.getDefualt().error("hook LayoutInflater fail");
-//            }
-//        }
-//
+        Window window = target.getWindow();
+        LayoutInflater originInflater = target.getLayoutInflater();
+        if (!(originInflater instanceof AppLayoutInflater)) {
+            boolean flag = AppReflect.setField(window.getClass(), window, "mLayoutInflater",
+                    new AppLayoutInflater(originInflater));
+            if (!flag) {
+                AppLoger.getDefualt().error("hook LayoutInflater fail");
+            }
+        }
+
         try {
             Class<?> clazz = Class.forName("com.android.internal.R.styleable");
             TypedArray typedArray = target.obtainStyledAttributes((int[]) AppReflect.getField(clazz, null, "Window"));
