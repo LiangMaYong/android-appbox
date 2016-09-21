@@ -44,6 +44,8 @@ public class AppApplicationManager {
                         .newInstance();
                 AppMethod method = new AppMethod(Application.class, application, "attach", Context.class);
                 method.invoke(ctx);
+                // register receiver
+                AppReceiverManager.registerReceiver(context, appPath);
                 application.onCreate();
                 AppLoger.getDefualt().error("create application:" + info.getApplicationName());
             } catch (Exception e) {

@@ -23,10 +23,10 @@ public class AppHookHandler {
     public static void hook(Application application) {
         hookPackageManager(application);
         hookActivityManagerNative(application);
-        hookActivityThreadHandler();
+        hookActivityThreadHandler(application);
     }
 
-    public static void hookActivityThreadHandler() {
+    private static void hookActivityThreadHandler(Application application) {
         try {
             Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
             Field currentActivityThreadField = activityThreadClass.getDeclaredField("sCurrentActivityThread");
@@ -41,7 +41,7 @@ public class AppHookHandler {
             Field mCallBackField = Handler.class.getDeclaredField("mCallback");
             mCallBackField.setAccessible(true);
 
-            mCallBackField.set(mH, new ActivityThreadHandlerCallback(mH));
+            mCallBackField.set(mH, new ActivityThreadHandlerCallback(application, mH));
         } catch (Exception e) {
         }
     }

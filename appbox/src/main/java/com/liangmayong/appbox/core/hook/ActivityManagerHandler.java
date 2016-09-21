@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 
 import com.liangmayong.appbox.core.AppConstant;
@@ -31,7 +32,9 @@ public class ActivityManagerHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("startActivity".equals(method.getName())) {
-
+            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
+            Intent intent = integerIntentPair.second;
+            Log.e("TAG", intent.getExtras() + "");
         } else if ("startService".equals(method.getName()) || "bindService".equals(method.getName())) {
             Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
             Intent intent = integerIntentPair.second;
