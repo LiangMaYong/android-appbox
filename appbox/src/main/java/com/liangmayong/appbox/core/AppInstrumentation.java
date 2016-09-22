@@ -344,11 +344,24 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                             Intent intent, int requestCode, Bundle options) {
-        Intent targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent);
+        Intent targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent, false);
         if (targetIntent == null) {
             targetIntent = intent;
         }
-        return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
+        try {
+            return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
+        } catch (Exception e) {
+            try {
+                targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent, true);
+                if (targetIntent == null) {
+                    targetIntent = intent;
+                }
+                return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
+            } catch (Exception error) {
+                AppLoger.getDefualt().error("The execStartActivity fail", e);
+                return null;
+            }
+        }
     }
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment fragment,
@@ -358,17 +371,33 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment fragment,
                                             Intent intent, int requestCode, Bundle options) {
+        Intent targetIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            targetIntent = AppLifeCycle.handlerStartActivity(who, fragment.getActivity(), intent, false);
+        } else {
+            targetIntent = intent;
+        }
         try {
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class, int.class, Bundle.class);
-            return method.invoke(who, contextThread, token, fragment, intent, requestCode, options);
+            return method.invoke(who, contextThread, token, fragment, targetIntent, requestCode, options);
         } catch (Exception e) {
-            AppLoger.getDefualt().error("The execStartActivity fail", e);
-            return null;
+            try {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+                    targetIntent = AppLifeCycle.handlerStartActivity(who, fragment.getActivity(), intent, true);
+                } else {
+                    targetIntent = intent;
+                }
+                AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class, int.class, Bundle.class);
+                return method.invoke(who, contextThread, token, fragment, targetIntent, requestCode, options);
+            } catch (Exception err) {
+                AppLoger.getDefualt().error("The execStartActivity fail", e);
+                return null;
+            }
         }
     }
 
     protected ActivityResult proxyExecStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
-                                                    Intent intent, int requestCode, Bundle options) {
+                                                    Intent intent, int requestCode, Bundle options) throws Exception {
         try {
             if (intent.getComponent() == null) {
                 intent.setClassName(who, AppboxActivity.class.getName());
@@ -376,8 +405,7 @@ public final class AppInstrumentation extends Instrumentation {
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
             return method.invoke(who, contextThread, token, target, intent, requestCode, options);
         } catch (Exception e) {
-            AppLoger.getDefualt().error("The execStartActivity fail", e);
-            return null;
+            throw e;
         }
     }
 }

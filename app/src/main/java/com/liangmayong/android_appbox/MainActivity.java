@@ -32,41 +32,42 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
-                if (new File(path).exists()) {
-                    AppInfo info = AppInfo.get(MainActivity.this, path);
-                    Log.e("TAG", info.getMain());
-                    if (info != null) {
-                        //View vies = LayoutInflater.from(AppContext.get(MainActivity.this, info.getAppPath())).inflate(AppResources.getResources(info.getAppPath()).getLayout(2130968606), (ViewGroup) getWindow().getDecorView());
-                        //setContentView(vies);
-                        AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
-                    }
-                }
-            }
-        });
-        textView = (TextView) findViewById(R.id.textView);
-        startService(new Intent(this, MService.class));
-        //AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
+//        imageView = (ImageView) findViewById(R.id.imageView);
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
+//                if (new File(path).exists()) {
+//                    AppInfo info = AppInfo.get(MainActivity.this, path);
+//                    Log.e("TAG", info.getMain());
+//                    if (info != null) {
+//                        //View vies = LayoutInflater.from(AppContext.get(MainActivity.this, info.getAppPath())).inflate(AppResources.getResources(info.getAppPath()).getLayout(2130968606), (ViewGroup) getWindow().getDecorView());
+//                        //setContentView(vies);
+//                        AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
+//                    }
+//                }
+//            }
+//        });
+//        textView = (TextView) findViewById(R.id.textView);
+//        startService(new Intent(this, MService.class));
+        startActivity(new Intent(this,Main2Activity.class));
+       // AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
         //AppboxCore.getInstance().startService(this, "", MService.class.getName());
-        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
-        if (new File(path).exists()) {
-            AppInfo info = AppInfo.get(MainActivity.this, path);
-            if (info != null) {
-                Log.e("TAG", info + "");
-                //Toast.makeText(this, info + "", Toast.LENGTH_SHORT).show();
-//                AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
-                imageView.setImageDrawable(info.getIcon());
-                textView.setText(info.getLable());
-            } else {
-                install();
-            }
-        } else {
-            install();
-        }
+//        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
+//        if (new File(path).exists()) {
+//            AppInfo info = AppInfo.get(MainActivity.this, path);
+//            if (info != null) {
+//                Log.e("TAG", info + "");
+//                //Toast.makeText(this, info + "", Toast.LENGTH_SHORT).show();
+////                AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
+//                imageView.setImageDrawable(info.getIcon());
+//                textView.setText(info.getLable());
+//            } else {
+//                install();
+//            }
+//        } else {
+//            install();
+//        }
 
 //        new Thread(new Runnable() {
 //            @Override

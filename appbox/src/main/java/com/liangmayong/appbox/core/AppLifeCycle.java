@@ -245,9 +245,9 @@ public final class AppLifeCycle {
         currentActivity = target;
     }
 
-    protected static Intent handlerStartActivity(Context who, Activity target, Intent intent) {
+    protected static Intent handlerStartActivity(Context who, Activity target, Intent intent, boolean replace) {
         Intent targetIntent = null;
-        if (intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
+        if (replace || intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
             String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
             if (path == null || "".equals(path)) {
                 path = target.getIntent().getStringExtra(AppConstant.INTENT_APP_PATH);
