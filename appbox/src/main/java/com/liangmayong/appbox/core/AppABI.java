@@ -1,7 +1,6 @@
 package com.liangmayong.appbox.core;
 
 import android.os.Build;
-import android.util.Log;
 
 /**
  * AppABI
@@ -11,25 +10,18 @@ import android.util.Log;
  */
 public final class AppABI {
 
-    public static final int ARMv5 = 1;
-    public static final int ARMv7 = 2;
-    public static final int ARMv8 = 3;
-    public static final int MIPS = 21;
-    public static final int MIPS64 = 22;
-    public static final int x86 = 51;
-    public static final int x86_64 = 52;
-
-    public static final int getABI1() {
-        return parserABI(Build.CPU_ABI);
-    }
-
-    public static final int getABI2() {
-        return parserABI(Build.CPU_ABI2);
-    }
+    public static final int ARMv5 = 10;
+    public static final int ARMv7 = 20;
+    public static final int ARMv8 = 30;
+    public static final int MIPS = 111;
+    public static final int MIPS64 = 122;
+    public static final int x86 = 211;
+    public static final int x86_64 = 222;
+    public static final int UNKOWN = -1000;
 
     public static final boolean withABI(String abi) {
-        int d = getABI1() - parserABI(abi);
-        if (d < 10 && d >= 0) {
+        int d = parserABI(Build.CPU_ABI) - parserABI(abi);
+        if ((d < 50 && d >= 0) || d == x86 - ARMv7 || d == x86 - ARMv5 || d == x86_64 - ARMv5) {
             return true;
         }
         return false;
@@ -51,7 +43,7 @@ public final class AppABI {
         } else if ("x86_64".equals(abi)) {
             return x86_64;
         } else {
-            return 100;
+            return UNKOWN;
         }
     }
 
