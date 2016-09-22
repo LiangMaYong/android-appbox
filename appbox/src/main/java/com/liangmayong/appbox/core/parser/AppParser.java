@@ -6,8 +6,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Build;
+import android.util.Log;
 
 import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppNative;
 import com.liangmayong.appbox.core.AppResources;
 
 import java.io.File;
@@ -66,6 +68,8 @@ public final class AppParser {
                         info.sourceDir = appPath;
                         info.publicSourceDir = appPath;
                     }
+                    info.nativeLibraryDir = AppNative.getNativePath(appPath);
+                    Log.e("TAG",info.nativeLibraryDir);
                     String applicationName = ManifestParser.getApplicationName(appPath);
                     if (applicationName != null && !"".equals(applicationName)) {
                         if (applicationName.startsWith(".")) {

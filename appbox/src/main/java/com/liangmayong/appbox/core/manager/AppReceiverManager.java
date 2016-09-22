@@ -57,7 +57,7 @@ public final class AppReceiverManager {
                     try {
                         BroadcastReceiver broadcastReceiver = (BroadcastReceiver) clazz.newInstance();
                         receivers.add(broadcastReceiver);
-                        AppApplicationManager.handleCreateApplication(appPath).registerReceiver(broadcastReceiver, entry.getValue());
+                        AppApplicationManager.getHostApplication().registerReceiver(broadcastReceiver, entry.getValue());
                     } catch (Exception e) {
                     }
                 }

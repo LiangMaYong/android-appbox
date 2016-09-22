@@ -1,27 +1,17 @@
 package com.liangmayong.appbox.core;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by liangmayong on 2016/9/18.
  */
 public final class AppMethod {
 
-    // STRING_METHOD_MAP
-    private static final Map<String, Method> STRING_METHOD_MAP = new HashMap<String, Method>();
-
     private static Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
-        String key = clazz.getName() + "@" + name;
-        if (STRING_METHOD_MAP.containsKey(key)) {
-            return STRING_METHOD_MAP.get(key);
-        }
         Method method = null;
         for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
             try {
                 method = clazz.getDeclaredMethod(name, parameterTypes);
-                STRING_METHOD_MAP.put(key, method);
                 return method;
             } catch (Exception e) {
             }

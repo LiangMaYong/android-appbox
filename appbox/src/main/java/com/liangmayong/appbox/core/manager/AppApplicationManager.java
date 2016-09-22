@@ -39,7 +39,7 @@ public class AppApplicationManager {
      * @param appPath appPath
      * @return
      */
-    public static Application handleCreateApplication(String appPath) {
+    public static Application handleCreateApplication(final String appPath) {
         Context context = getHostApplication();
         String key = "application_" + appPath;
         if (STRING_SERVICE_MAP.containsKey(key)) {
@@ -57,7 +57,12 @@ public class AppApplicationManager {
                 AppMethod method = new AppMethod(Application.class, application, "attach", Context.class);
                 method.invoke(ctx);
                 // register receiver
-                AppReceiverManager.registerReceiver(appPath);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AppReceiverManager.registerReceiver(appPath);
+                    }
+                }).start();
                 application.onCreate();
                 AppLoger.getDefualt().error("create application:" + info.getApplicationName());
             } catch (Exception e) {

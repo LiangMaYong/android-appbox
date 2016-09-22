@@ -1,16 +1,10 @@
 package com.liangmayong.appbox.core.hook;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
-import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppReflect;
-import com.liangmayong.appbox.core.manager.AppApplicationManager;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by LiangMaYong on 2016/9/19.
@@ -32,11 +26,13 @@ public final class ActivityThreadHandlerCallback implements Handler.Callback {
     }
 
     @Override
-    public boolean handleMessage(Message msg) {
+    public boolean handleMessage(final Message msg) {
         if (msg.what == LAUNCH_ACTIVITY) {
             handleLaunchActivity(msg);
+            mBase.handleMessage(msg);
+        } else {
+            mBase.handleMessage(msg);
         }
-        mBase.handleMessage(msg);
         return true;
     }
 

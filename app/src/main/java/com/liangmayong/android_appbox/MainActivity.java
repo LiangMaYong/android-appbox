@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liangmayong.appbox.AppboxCore;
+import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
 
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-        private String appName = "PLPlayer.apk";
+    private String appName = "PLPlayer.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         initView();
+//        install();
+
 //        startService(new Intent(this, MService.class));
 //        startActivity(new Intent(this, Main2Activity.class));
     }
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     AppInfo info = AppInfo.get(MainActivity.this, pluginTemp.getPath());
                     AppNative.copyNativeLibrary(info.getAppPath());
+                    AppClassLoader.add(info.getAppPath());
                     mHandler.sendEmptyMessage(0);
                 } catch (Exception e) {
                     e.printStackTrace();

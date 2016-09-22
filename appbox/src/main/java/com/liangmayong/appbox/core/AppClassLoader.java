@@ -48,6 +48,15 @@ public final class AppClassLoader {
     }
 
     /**
+     * add
+     *
+     * @param appPath appPath
+     */
+    public static void add(String appPath) {
+        getClassloader(appPath);
+    }
+
+    /**
      * getClassloader
      *
      * @param appPath appPath
