@@ -3,13 +3,11 @@ package com.liangmayong.appbox.core.hook;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 
-import com.liangmayong.appbox.core.AppConstant;
-import com.liangmayong.appbox.core.AppExtras;
-import com.liangmayong.appbox.core.launcher.AppboxService;
+import com.liangmayong.appbox.core.box.BoxActivity;
+import com.liangmayong.appbox.core.box.BoxService;
+import com.liangmayong.appbox.core.modifiers.AppIntentModifier;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -31,38 +29,15 @@ public class ActivityManagerHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if ("startActivity".equals(method.getName())) {
-//            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
-//            Intent intent = integerIntentPair.second;
-//            Log.e("TAG", intent.getExtras() + "");
+        if ("startActivity".equals(method.getName()) || "startActivityAndWait".equals(method.getName()) || "startActivityWithConfig".equals(method.getName()) || "startActivityIntentSender".equals(method.getName())) {
+            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
+            Intent intent = integerIntentPair.second;
+            Intent targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxActivity.class.getName()), false);
+            args[integerIntentPair.first] = targetIntent;
         } else if ("startService".equals(method.getName()) || "bindService".equals(method.getName())) {
             Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
             Intent intent = integerIntentPair.second;
-            Intent targetIntent = null;
-            if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_PATH)) {
-                String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-                if (path == null) {
-                    path = "";
-                }
-                String serviceName = "";
-                if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
-                    serviceName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-                } else {
-                    serviceName = intent.getComponent().getClassName();
-                }
-                Bundle extras = intent.getExtras();
-                if (extras != null) {
-                    AppExtras.saveExtras(path, serviceName, extras);
-                }
-                Intent newIntent = new Intent();
-                ComponentName componentName = new ComponentName(mContext.getPackageName(), AppboxService.class.getName());
-                newIntent.setComponent(componentName);
-                newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, serviceName);
-                newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-                targetIntent = newIntent;
-            } else {
-                targetIntent = intent;
-            }
+            Intent targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxService.class.getName()), false);
             args[integerIntentPair.first] = targetIntent;
         }
         return method.invoke(mBase, args);

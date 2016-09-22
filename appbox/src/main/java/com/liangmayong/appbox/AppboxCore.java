@@ -14,8 +14,8 @@ import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.AppInstrumentation;
 import com.liangmayong.appbox.core.AppReflect;
-import com.liangmayong.appbox.core.launcher.AppboxActivity;
-import com.liangmayong.appbox.core.launcher.AppboxService;
+import com.liangmayong.appbox.core.box.BoxActivity;
+import com.liangmayong.appbox.core.box.BoxService;
 
 /**
  * Created by LiangMaYong on 2016/9/18.
@@ -101,7 +101,7 @@ public class AppboxCore {
         if (context == null) {
             return;
         }
-        Intent intent = new Intent(context, AppboxActivity.class);
+        Intent intent = new Intent(context, BoxActivity.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, actName);
         if (extars != null) {
@@ -174,7 +174,7 @@ public class AppboxCore {
         if (context == null) {
             return null;
         }
-        Intent intent = new Intent(context, AppboxService.class);
+        Intent intent = new Intent(context, BoxService.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
         if (extars != null) {
@@ -200,7 +200,7 @@ public class AppboxCore {
         if (activity == null) {
             return false;
         }
-        Intent intent = new Intent(activity, AppboxService.class);
+        Intent intent = new Intent(activity, BoxService.class);
         intent.putExtra(AppConstant.INTENT_APP_PATH, path);
         intent.putExtra(AppConstant.INTENT_APP_LAUNCH, serName);
         if (extars != null) {

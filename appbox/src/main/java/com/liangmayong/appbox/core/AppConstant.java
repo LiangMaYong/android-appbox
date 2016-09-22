@@ -10,5 +10,6 @@ public final class AppConstant {
 
     public static final String INTENT_APP_PATH = "APPBOX_PATH";
     public static final String INTENT_APP_LAUNCH = "APPBOX_LAUNCH";
+    public static final String INTENT_APP_MODIFIERED = "APPBOX_MODIFIERED";
 
 }

@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.core.launcher;
+package com.liangmayong.appbox.core.box;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import com.liangmayong.appbox.core.manager.AppServiceManager;
 /**
  * Created by LiangMaYong on 2016/9/19.
  */
-public class AppboxService extends Service {
+public class BoxService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

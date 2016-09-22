@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 
-import com.liangmayong.appbox.core.launcher.AppboxActivity;
+import com.liangmayong.appbox.core.box.BoxActivity;
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
-import com.liangmayong.appbox.core.modifiers.AppContextModifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -266,7 +263,7 @@ public final class AppLifeCycle {
                 AppExtras.saveExtras(path, activityName, extras);
             }
             Intent newIntent = new Intent();
-            newIntent.setClassName(who, AppboxActivity.class.getName());
+            newIntent.setClassName(who, BoxActivity.class.getName());
             newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
             newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
             targetIntent = newIntent;
@@ -295,6 +292,10 @@ public final class AppLifeCycle {
             } catch (Exception e) {
             }
         }
-        return null;
+        try {
+            return (Activity) cl.loadClass(className).newInstance();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

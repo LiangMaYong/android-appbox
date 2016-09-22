@@ -18,7 +18,8 @@ import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.liangmayong.appbox.core.launcher.AppboxActivity;
+import com.liangmayong.appbox.core.box.BoxActivity;
+import com.liangmayong.appbox.core.modifiers.AppIntentModifier;
 
 /**
  * Created by liangmayong on 2016/9/18.
@@ -344,15 +345,11 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                             Intent intent, int requestCode, Bundle options) {
-        Intent targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent, false);
-        if (targetIntent == null) {
-            targetIntent = intent;
-        }
         try {
-            return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
+            return proxyExecStartActivity(who, contextThread, token, target, intent, requestCode, options);
         } catch (Exception e) {
             try {
-                targetIntent = AppLifeCycle.handlerStartActivity(who, target, intent, true);
+                Intent targetIntent = AppIntentModifier.modify(intent, target.getIntent(), new ComponentName(who.getPackageName(), BoxActivity.class.getName()), true);
                 if (targetIntent == null) {
                     targetIntent = intent;
                 }
@@ -371,19 +368,14 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment fragment,
                                             Intent intent, int requestCode, Bundle options) {
-        Intent targetIntent = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-            targetIntent = AppLifeCycle.handlerStartActivity(who, fragment.getActivity(), intent, false);
-        } else {
-            targetIntent = intent;
-        }
         try {
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class, int.class, Bundle.class);
-            return method.invoke(who, contextThread, token, fragment, targetIntent, requestCode, options);
+            return method.invoke(who, contextThread, token, fragment, intent, requestCode, options);
         } catch (Exception e) {
             try {
+                Intent targetIntent = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                    targetIntent = AppLifeCycle.handlerStartActivity(who, fragment.getActivity(), intent, true);
+                    targetIntent = AppIntentModifier.modify(intent, fragment.getActivity().getIntent(), new ComponentName(who.getPackageName(), BoxActivity.class.getName()), true);
                 } else {
                     targetIntent = intent;
                 }
@@ -400,7 +392,7 @@ public final class AppInstrumentation extends Instrumentation {
                                                     Intent intent, int requestCode, Bundle options) throws Exception {
         try {
             if (intent.getComponent() == null) {
-                intent.setClassName(who, AppboxActivity.class.getName());
+                intent.setClassName(who, BoxActivity.class.getName());
             }
             AppMethod method = new AppMethod(Instrumentation.class, mInstrumentation, "execStartActivity", Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
             return method.invoke(who, contextThread, token, target, intent, requestCode, options);

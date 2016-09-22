@@ -11,12 +11,12 @@
         android:supportsRtl="true">
         <!--seize a seat activity-->
         <activity
-            android:name="com.liangmayong.appbox.core.launcher.AppboxActivity"
+            android:name=".core.box.BoxActivity"
             android:enabled="true"
             android:exported="true" />
         <!--seize a seat service-->
         <service
-            android:name="com.liangmayong.appbox.core.launcher.AppboxService"
+            android:name=".core.box.BoxService"
             android:enabled="true"
             android:exported="true" />
     </application>

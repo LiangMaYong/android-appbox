@@ -5,17 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liangmayong.appbox.AppboxCore;
-import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
-import com.liangmayong.appbox.core.AppResources;
 
 import java.io.File;
 import java.io.FileOutputStream;
