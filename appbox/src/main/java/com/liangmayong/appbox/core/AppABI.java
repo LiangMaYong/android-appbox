@@ -1,9 +1,7 @@
 package com.liangmayong.appbox.core;
 
-import android.annotation.TargetApi;
 import android.os.Build;
-
-import java.util.ArrayList;
+import android.util.Log;
 
 /**
  * AppABI
@@ -13,62 +11,48 @@ import java.util.ArrayList;
  */
 public final class AppABI {
 
-    //cpuabi1
-    private static String cpuabi1 = "";
-    //cpuabi2
-    private static String cpuabi2 = "";
-    //libraryDirs
-    private static ArrayList<String> libraryDirs = null;
+    public static final int ARMv5 = 1;
+    public static final int ARMv7 = 2;
+    public static final int ARMv8 = 3;
+    public static final int MIPS = 21;
+    public static final int MIPS64 = 22;
+    public static final int x86 = 51;
+    public static final int x86_64 = 52;
 
-    /**
-     * setCpuABI1
-     *
-     * @param cpuabi cpuabi
-     */
-    public static void setABI1(String cpuabi) {
-        AppABI.cpuabi1 = cpuabi;
+    public static final int getABI1() {
+        return parserABI(Build.CPU_ABI);
     }
 
-    /**
-     * setCpuABI2
-     *
-     * @param cpuabi cpuabi
-     */
-    public static void setABI2(String cpuabi) {
-        AppABI.cpuabi2 = cpuabi;
+    public static final int getABI2() {
+        return parserABI(Build.CPU_ABI2);
     }
 
-    /**
-     * getCpuABI
-     *
-     * @return cpuapi1
-     */
-    @TargetApi(Build.VERSION_CODES.DONUT)
-    public static final String getABI() {
-        return cpuabi1 == null || "".equals(cpuabi1) ? Build.CPU_ABI : cpuabi1;
-    }
-
-    /**
-     * getCpuABI2
-     *
-     * @return cpuapi2
-     */
-    @TargetApi(Build.VERSION_CODES.FROYO)
-    public static final String getABI2() {
-        return cpuabi2 == null || "".equals(cpuabi2) ? Build.CPU_ABI2 : cpuabi2;
-    }
-
-    /**
-     * getNativelibraryDirs
-     *
-     * @return native library dirs
-     */
-    public static ArrayList<String> getNativeLibraryABIs() {
-        if (libraryDirs == null) {
-            libraryDirs = new ArrayList<String>();
-            libraryDirs.add("lib/" + AppABI.getABI());
-            libraryDirs.add("lib/" + AppABI.getABI2());
+    public static final boolean withABI(String abi) {
+        int d = getABI1() - parserABI(abi);
+        if (d < 10 && d >= 0) {
+            return true;
         }
-        return libraryDirs;
+        return false;
     }
+
+    public static final int parserABI(String abi) {
+        if ("armeabi".equals(abi)) {
+            return ARMv5;
+        } else if ("armeabi-v7a".equals(abi)) {
+            return ARMv7;
+        } else if ("arm64-v8a".equals(abi)) {
+            return ARMv8;
+        } else if ("mips".equals(abi)) {
+            return MIPS;
+        } else if ("mips64".equals(abi)) {
+            return MIPS64;
+        } else if ("x86".equals(abi)) {
+            return x86;
+        } else if ("x86_64".equals(abi)) {
+            return x86_64;
+        } else {
+            return 100;
+        }
+    }
+
 }

@@ -1,17 +1,14 @@
 package com.liangmayong.appbox.core;
 
-import com.liangmayong.appbox.core.utils.FileUtil;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by liangmayong on 2016/9/18.
@@ -83,11 +80,7 @@ public final class AppNative {
             if (!file.exists()) {
                 file.mkdirs();
             }
-            try {
-                ZipFile zipFile = new ZipFile(new File(appPath), ZipFile.OPEN_READ);
-                extractLibFile(zipFile, file);
-            } catch (Exception e) {
-            }
+            unzipFile(appPath, targetDir);
         }
     }
 
@@ -107,61 +100,104 @@ public final class AppNative {
         }
     }
 
-
-    private static boolean extractLibFile(ZipFile zip, File tardir)
-            throws IOException {
-
-        if (!tardir.exists()) {
-            tardir.mkdirs();
-        }
-
-        String defaultArch = "armeabi";
-        Map<String, List<ZipEntry>> archLibEntries = new HashMap<String, List<ZipEntry>>();
-        for (Enumeration<? extends ZipEntry> e = zip.entries(); e
-                .hasMoreElements(); ) {
-            ZipEntry entry = e.nextElement();
-            String name = entry.getName();
-            if (name.startsWith("/")) {
-                name = name.substring(1);
+    /**
+     * isDirEquals
+     *
+     * @param srcfile srcfile
+     * @param objDir  objDir
+     * @return boolean
+     */
+    private final static boolean isDirEquals(String srcfile, String objDir) {
+        try {
+            int index = srcfile.lastIndexOf("/");
+            String dir = null;
+            String firstDirName = null;
+            if (index != -1)
+                dir = srcfile.substring(0, index);
+            index = srcfile.indexOf("/");
+            if (index != -1)
+                firstDirName = srcfile.substring(0, index);
+            if (null != dir && dir.equalsIgnoreCase(objDir)) {
+                return true;
+            } else if (null != firstDirName && firstDirName.equalsIgnoreCase(objDir)) {
+                return true;
             }
-            if (name.startsWith("lib/")) {
-                if (entry.isDirectory()) {
-                    continue;
-                }
-                int sp = name.indexOf('/', 4);
-                String en2add;
-                if (sp > 0) {
-                    String osArch = name.substring(4, sp);
-                    en2add = osArch.toLowerCase();
-                } else {
-                    en2add = defaultArch;
-                }
-                List<ZipEntry> ents = archLibEntries.get(en2add);
-                if (ents == null) {
-                    ents = new LinkedList<ZipEntry>();
-                    archLibEntries.put(en2add, ents);
-                }
-                ents.add(entry);
-            }
+        } catch (Exception e) {
         }
-        String arch = System.getProperty("os.arch");
-        List<ZipEntry> libEntries = archLibEntries.get(arch.toLowerCase());
-        if (libEntries == null) {
-            libEntries = archLibEntries.get(defaultArch);
-        }
-        boolean hasLib = false;
-        if (libEntries != null) {
-            hasLib = true;
-            if (!tardir.exists()) {
-                tardir.mkdirs();
-            }
-            for (ZipEntry libEntry : libEntries) {
-                String ename = libEntry.getName();
-                String pureName = ename.substring(ename.lastIndexOf('/') + 1);
-                File target = new File(tardir, pureName);
-                FileUtil.writeToFile(zip.getInputStream(libEntry), target);
-            }
-        }
-        return hasLib;
+        return false;
     }
+
+    /**
+     * unzipFile
+     *
+     * @param zipFile   zipFile
+     * @param targetDir targetDir
+     */
+    private final static void unzipFile(String zipFile, String targetDir) {
+        String strEntry = "";
+        ZipInputStream zis = null;
+        try {
+            FileInputStream fis = new FileInputStream(zipFile);
+            zis = new ZipInputStream(new BufferedInputStream(fis));
+            ZipEntry entry = null;
+            while ((entry = zis.getNextEntry()) != null) {
+                strEntry = entry.getName();
+                if (entry.getName().startsWith("lib/")) {
+                    String abi = entry.getName().substring("lib/".length(), entry.getName().lastIndexOf("/"));
+                    boolean find = false;
+                    if (AppABI.withABI(abi)) {
+                        find = true;
+                    }
+                    if (find) {
+                        String targetEntry = strEntry.substring(strEntry.lastIndexOf("/") + 1);
+                        String libraryEntry = targetDir + "/" + targetEntry;
+                        File entryFile = new File(libraryEntry);
+                        unzipFile(zis, entryFile);
+                    }
+                }
+            }
+        } catch (Exception e) {
+        } finally {
+            try {
+                if (null != zis) {
+                    zis.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    /**
+     * saveZipFile
+     *
+     * @param zis       zis
+     * @param entryFile entryFile
+     * @throws Exception e
+     */
+    private final static void unzipFile(ZipInputStream zis, File entryFile) throws Exception {
+        BufferedOutputStream dest = null;
+        try {
+            int buffer = 4096;
+            byte data[] = new byte[buffer];
+            int count;
+            if (entryFile.exists()) {
+                entryFile.delete();
+            }
+            File entryDir = new File(entryFile.getParent());
+            FileOutputStream fos = new FileOutputStream(entryFile);
+            dest = new BufferedOutputStream(fos, buffer);
+            while ((count = zis.read(data, 0, buffer)) != -1) {
+                dest.write(data, 0, count);
+            }
+            dest.flush();
+        } catch (Exception e) {
+        } finally {
+            if (null != dest) {
+                dest.close();
+                dest = null;
+            }
+        }
+    }
+
+
 }
