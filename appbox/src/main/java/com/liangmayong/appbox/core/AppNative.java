@@ -30,7 +30,7 @@ public final class AppNative {
             return "";
         }
         try {
-            String libraryDir = appFile.getParent() + "/libs/" + encrypt(appPath);
+            String libraryDir = appFile.getParent() + "/libs-" + encrypt(appPath) + "/";
             File file = new File(libraryDir);
             if (!file.exists()) {
                 file.mkdirs();

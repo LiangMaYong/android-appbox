@@ -13,6 +13,7 @@ import com.liangmayong.appbox.AppboxCore;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
+import com.liangmayong.preferences.Preferences;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             info = (AppInfo) msg.obj;
+            Preferences.getDefaultPreferences().setString("path", info.getAppPath());
             initView();
         }
     };
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
         textView = (TextView) findViewById(R.id.textView);
+        info = AppInfo.get(this, Preferences.getDefaultPreferences().getString("path"));
         initView();
     }
 
