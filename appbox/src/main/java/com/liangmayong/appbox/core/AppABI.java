@@ -19,9 +19,9 @@ public final class AppABI {
     public static final int x86_64 = 222;
     public static final int UNKOWN = -1000;
 
-    public static final boolean withABI(String abi) {
+    public static final boolean withABI(String abi, boolean flag) {
         int d = parserABI(Build.CPU_ABI) - parserABI(abi);
-        if ((d < 50 && d >= 0) || d == x86 - ARMv7 || d == x86 - ARMv5 || d == x86_64 - ARMv5) {
+        if ((d < 50 && d >= 0) || (flag && (d == x86 - ARMv7 || d == x86 - ARMv5 || d == x86_64 - ARMv5))) {
             return true;
         }
         return false;

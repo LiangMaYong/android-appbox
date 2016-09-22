@@ -144,15 +144,17 @@ public final class AppNative {
                 strEntry = entry.getName();
                 if (entry.getName().startsWith("lib/")) {
                     String abi = entry.getName().substring("lib/".length(), entry.getName().lastIndexOf("/"));
-                    boolean find = false;
-                    if (AppABI.withABI(abi)) {
-                        find = true;
-                    }
-                    if (find) {
-                        String targetEntry = strEntry.substring(strEntry.lastIndexOf("/") + 1);
-                        String libraryEntry = targetDir + "/" + targetEntry;
-                        File entryFile = new File(libraryEntry);
-                        unzipFile(zis, entryFile);
+                    String targetEntry = strEntry.substring(strEntry.lastIndexOf("/") + 1);
+                    String libraryEntry = targetDir + "/" + targetEntry;
+                    File entryFile = new File(libraryEntry);
+                    if (entryFile.exists()) {
+                        if (AppABI.withABI(abi, false)) {
+                            unzipFile(zis, entryFile);
+                        }
+                    } else {
+                        if (AppABI.withABI(abi, true)) {
+                            unzipFile(zis, entryFile);
+                        }
                     }
                 }
             }
