@@ -1,8 +1,9 @@
 package com.liangmayong.android_appbox;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,64 +20,60 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView imageView;
-    TextView textView;
+    private ImageView imageView;
+    private TextView textView;
 
-    private String appName = "PLPlayer.apk";
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            initView();
+        }
+    };
+
+        private String appName = "PLPlayer.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        imageView = (ImageView) findViewById(R.id.imageView);
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
-//                if (new File(path).exists()) {
-//                    AppInfo info = AppInfo.get(MainActivity.this, path);
-//                    Log.e("TAG", info.getMain());
-//                    if (info != null) {
-//                        //View vies = LayoutInflater.from(AppContext.get(MainActivity.this, info.getAppPath())).inflate(AppResources.getResources(info.getAppPath()).getLayout(2130968606), (ViewGroup) getWindow().getDecorView());
-//                        //setContentView(vies);
-//                        AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
-//                    }
-//                }
-//            }
-//        });
-//        textView = (TextView) findViewById(R.id.textView);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        textView = (TextView) findViewById(R.id.textView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
+                if (new File(path).exists()) {
+                    AppInfo info = AppInfo.get(MainActivity.this, path);
+                    Log.e("TAG", info.getMain());
+                    if (info != null) {
+                        AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
+                    }
+                }
+            }
+        });
+        initView();
 //        startService(new Intent(this, MService.class));
-        startActivity(new Intent(this,Main2Activity.class));
-       // AppboxCore.getInstance().startActivity(this, "", Main2Activity.class.getName());
-        //AppboxCore.getInstance().startService(this, "", MService.class.getName());
-//        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
-//        if (new File(path).exists()) {
-//            AppInfo info = AppInfo.get(MainActivity.this, path);
-//            if (info != null) {
-//                Log.e("TAG", info + "");
-//                //Toast.makeText(this, info + "", Toast.LENGTH_SHORT).show();
-////                AppboxCore.getInstance().startActivity(this, info.getAppPath(), info.getMain());
-//                imageView.setImageDrawable(info.getIcon());
-//                textView.setText(info.getLable());
-//            } else {
-//                install();
-//            }
-//        } else {
-//            install();
-//        }
+//        startActivity(new Intent(this, Main2Activity.class));
+    }
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                AppNative.copyNativeLibrary("/data/user/0/com.liangmayong.android_appbox/app_appbox/1474354212104.apk");
-//            }
-//        }).start();
-        // AppboxCore.getInstance().startActivity(this, path, "com.pili.pldroid.playerdemo.MainActivity");
-        //AppboxCore.getInstance().bindService(this, "", MService.class.getName(), null, conn, Context.BIND_AUTO_CREATE);
-        //install();
+    private void initView() {
+        String path = "/data/user/0/com.liangmayong.android_appbox/app_appbox/" + appName;
+        if (new File(path).exists()) {
+            AppInfo info = AppInfo.get(MainActivity.this, path);
+            if (info != null) {
+                imageView.setImageDrawable(info.getIcon());
+                textView.setText(info.getLable());
+            } else {
+                install();
+            }
+        } else {
+            install();
+        }
     }
 
     public void install() {
+        textView.setText("正在安装插件");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     AppInfo info = AppInfo.get(MainActivity.this, pluginTemp.getPath());
                     AppNative.copyNativeLibrary(info.getAppPath());
-                    Log.e("TAG", info + "");
+                    mHandler.sendEmptyMessage(0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

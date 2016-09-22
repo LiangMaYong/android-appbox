@@ -51,7 +51,7 @@ public final class AppParser {
                     mConstructor.setAccessible(true);
                     AppInfo appInfo = mConstructor.newInstance();
                     appInfo.setField("appPath", appPath);
-                    AssetManager assetManager = AppResources.getAssets(appPath);
+                    AssetManager assetManager = AppResources.getAssets(context, appPath);
                     try {
                         InputStream inputStream = assetManager.open("appbox.xml");
                         List<Map<String, String>> mapLists = XmlParser.readXml(inputStream, "appbox");

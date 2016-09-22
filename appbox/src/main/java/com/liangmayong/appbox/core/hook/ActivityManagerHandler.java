@@ -39,6 +39,13 @@ public class ActivityManagerHandler implements InvocationHandler {
             Intent intent = integerIntentPair.second;
             Intent targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxService.class.getName()), false);
             args[integerIntentPair.first] = targetIntent;
+            Object obj = method.invoke(mBase, args);
+            if (obj == null) {
+                targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxService.class.getName()), true);
+                args[integerIntentPair.first] = targetIntent;
+                obj = method.invoke(mBase, args);
+            }
+            return obj;
         }
         return method.invoke(mBase, args);
     }

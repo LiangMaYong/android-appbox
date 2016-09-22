@@ -90,7 +90,7 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getAssets();
         }
-        return AppResources.getAssets(appPath);
+        return AppResources.getAssets(getBaseContext(), appPath);
     }
 
     /**
@@ -103,9 +103,25 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getResources();
         }
-        return AppResources.getResources(appPath);
+        return AppResources.getResources(getBaseContext(), appPath);
     }
 
+
+    private Resources.Theme mTheme = null;
+
+    /**
+     * getTheme
+     *
+     * @return theme
+     */
+    @Override
+    public Resources.Theme getTheme() {
+        if (mTheme == null) {
+            mTheme = getResources().newTheme();
+            mTheme.setTo(super.getTheme());
+        }
+        return mTheme;
+    }
 
     /**
      * setAppPath

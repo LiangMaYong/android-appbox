@@ -51,7 +51,7 @@ public class AppActivityModifier {
             AppLayoutInflaterModifier.clearLayoutCache();
         }
         // resources
-        Resources resources = AppResources.getResources(path);
+        Resources resources = AppResources.getResources(target, path);
         if (resources != null) {
             boolean flag = AppReflect.setField(target.getClass(), target, "mResources", resources);
             if (!flag) {
@@ -81,7 +81,7 @@ public class AppActivityModifier {
                 ActivityInfo activityInfo = info.getActivityInfo(target.getClass().getName());
                 if (activityInfo != null) {
                     replaceActivityInfo(activityInfo, target);
-                    replaceTheme(activityInfo, resources, target);
+                    replaceTheme(activityInfo, context, target);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         Intent intent = target.getIntent();
                         if (intent != null && target.isTaskRoot()) {
@@ -152,30 +152,31 @@ public class AppActivityModifier {
      * replaceTheme
      *
      * @param activityInfo activityInfo
-     * @param resources    resources
      * @param target       target
      */
-    private static void replaceTheme(ActivityInfo activityInfo, Resources resources, Activity target) {
-        boolean flag = false;
+    private static void replaceTheme(ActivityInfo activityInfo, Context context, Activity target) {
         if (activityInfo != null) {
             int resTheme = activityInfo.getThemeResource();
+            AppReflect.setField(target.getClass(), target, "mTheme", context.getTheme());
             if (resTheme != 0) {
-                flag = true;
-                boolean hasNotSetTheme = true;
-                try {
-                    Object theme = AppReflect.getField(ContextThemeWrapper.class, target, "mTheme");
-                    hasNotSetTheme = theme == null ? true : false;
-                } catch (Exception e) {
-                }
-                if (hasNotSetTheme) {
-                    target.setTheme(resTheme);
-                }
+                context.getTheme().applyStyle(resTheme, true);
             }
         }
-        if (!flag) {
-            Resources.Theme mTheme = resources.newTheme();
-            mTheme.setTo(target.getBaseContext().getTheme());
-            AppReflect.setField(target.getClass(), target, "mTheme", mTheme);
+    }
+
+    /**
+     * isSetTheme
+     *
+     * @param target target
+     * @return boolean
+     */
+    private static boolean isSetTheme(Activity target) {
+        boolean isSet = false;
+        try {
+            Object theme = AppReflect.getField(ContextThemeWrapper.class, target, "mTheme");
+            isSet = theme != null;
+        } catch (Exception e) {
         }
+        return isSet;
     }
 }

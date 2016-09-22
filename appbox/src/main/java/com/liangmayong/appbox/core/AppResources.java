@@ -1,5 +1,6 @@
 package com.liangmayong.appbox.core;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,10 +15,32 @@ import java.util.Map;
  */
 public final class AppResources extends Resources {
 
-    // STRING_RESOURCES_HASH_MAP
-    private static final Map<String, AppResources> STRING_RESOURCES_HASH_MAP = new HashMap<String, AppResources>();
+    // STRING_ASSET_MANAGER_HASH_MAP
+    private static final Map<String, AssetManager> STRING_ASSET_MANAGER_HASH_MAP = new HashMap<String, AssetManager>();
     // ADD_ASSET_PATH_METHOD
     private static Method ADD_ASSET_PATH_METHOD = null;
+
+    public static AssetManager getAssets(Context context, String appPath) {
+        String key = "asset_" + appPath;
+        if (STRING_ASSET_MANAGER_HASH_MAP.containsKey(key)) {
+            return STRING_ASSET_MANAGER_HASH_MAP.get(key);
+        }
+        try {
+            AssetManager assetManager = AssetManager.class.newInstance();
+            if (ADD_ASSET_PATH_METHOD == null) {
+                ADD_ASSET_PATH_METHOD = AssetManager.class.getMethod("addAssetPath", String.class);
+                ADD_ASSET_PATH_METHOD.setAccessible(true);
+            }
+            ADD_ASSET_PATH_METHOD.invoke(assetManager, appPath);
+            STRING_ASSET_MANAGER_HASH_MAP.put(key, assetManager);
+            return assetManager;
+        } catch (Throwable th) {
+        }
+        return context.getAssets();
+    }
+
+    // STRING_RESOURCES_HASH_MAP
+    private static final Map<String, AppResources> STRING_RESOURCES_HASH_MAP = new HashMap<String, AppResources>();
 
     /**
      * remove
@@ -25,9 +48,13 @@ public final class AppResources extends Resources {
      * @param appPath appPath
      */
     public static void remove(String appPath) {
-        String key = "resources_" + appPath;
-        if (STRING_RESOURCES_HASH_MAP.containsKey(key)) {
-            STRING_RESOURCES_HASH_MAP.remove(key);
+        String reskey = "resources_" + appPath;
+        if (STRING_RESOURCES_HASH_MAP.containsKey(reskey)) {
+            STRING_RESOURCES_HASH_MAP.remove(reskey);
+        }
+        String assetkey = "asset_" + appPath;
+        if (STRING_ASSET_MANAGER_HASH_MAP.containsKey(assetkey)) {
+            STRING_ASSET_MANAGER_HASH_MAP.remove(assetkey);
         }
     }
 
@@ -37,45 +64,18 @@ public final class AppResources extends Resources {
      * @param appPath appPath
      * @return resources
      */
-    public static Resources getResources(String appPath) {
+    public static Resources getResources(Context context, String appPath) {
         if (appPath == null || "".equals(appPath)) {
-            return null;
+            return context.getResources();
         }
         String key = "resources_" + appPath;
         if (STRING_RESOURCES_HASH_MAP.containsKey(key)) {
             return STRING_RESOURCES_HASH_MAP.get(key);
         }
-        Resources resources = Resources.getSystem();
-        AssetManager assets = null;
-        try {
-            assets = AssetManager.class.newInstance();
-        } catch (Exception e) {
-        }
-        try {
-            if (ADD_ASSET_PATH_METHOD == null) {
-                ADD_ASSET_PATH_METHOD = AssetManager.class.getMethod("addAssetPath", String.class);
-                ADD_ASSET_PATH_METHOD.setAccessible(true);
-            }
-            ADD_ASSET_PATH_METHOD.invoke(assets, appPath);
-        } catch (Exception e) {
-        }
-        AppResources apResources = new AppResources(assets, resources.getDisplayMetrics(), resources.getConfiguration());
+        AssetManager assetManager = getAssets(context, appPath);
+        AppResources apResources = new AppResources(assetManager, context.getResources().getDisplayMetrics(), context.getResources().getConfiguration());
         STRING_RESOURCES_HASH_MAP.put(key, apResources);
         return apResources;
-    }
-
-    /**
-     * getAssets
-     *
-     * @param appPath appPath
-     * @return assetManager
-     */
-    public static AssetManager getAssets(String appPath) {
-        Resources resources = getResources(appPath);
-        if (resources != null) {
-            return getResources(appPath).getAssets();
-        }
-        return null;
     }
 
     /**
@@ -88,4 +88,26 @@ public final class AppResources extends Resources {
     private AppResources(AssetManager assets, DisplayMetrics metrics, Configuration config) {
         super(assets, metrics, config);
     }
+
+//    public static void parserXML(XmlResourceParser xmlResourceParser) throws Exception {
+//
+//        int event = xmlResourceParser.getEventType();//
+//        while (event != XmlResourceParser.END_DOCUMENT) {
+//            switch (event) {
+//                case XmlResourceParser.START_DOCUMENT://start
+//                    break;
+//                case XmlResourceParser.START_TAG:
+//                    Log.e("TAG", "-----------------------------------------------------------------");
+//                    Log.e("TAG", "start name:" + xmlResourceParser.getName());
+//                    Log.e("TAG", "-----------------------------------------------------------------");
+//                    for (int i = 0; i < xmlResourceParser.getAttributeCount(); i++) {
+//                        Log.e("TAG", xmlResourceParser.getAttributeName(i) + "=" + xmlResourceParser.getAttributeValue(i));
+//                    }
+//                    break;
+//                case XmlResourceParser.END_TAG://end
+//                    break;
+//            }
+//            event = xmlResourceParser.next();//next
+//        }
+//    }
 }
