@@ -47,6 +47,9 @@ public final class AppInfo {
     private String lable = "";
     // packageInfo
     private PackageInfo packageInfo = null;
+    // private
+    private String signture = "";
+
     // icon
     private Drawable icon = null;
     // plugin path
@@ -75,6 +78,15 @@ public final class AppInfo {
      */
     public Drawable getIcon() {
         return icon;
+    }
+
+    /**
+     * getSignture
+     *
+     * @return signture
+     */
+    public String getSignture() {
+        return signture;
     }
 
     /**

@@ -10,6 +10,7 @@ import android.os.Build;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
 import com.liangmayong.appbox.core.AppResources;
+import com.liangmayong.appbox.core.AppSignture;
 
 import java.io.File;
 import java.io.InputStream;
@@ -52,6 +53,7 @@ public final class AppParser {
                     mConstructor.setAccessible(true);
                     AppInfo appInfo = mConstructor.newInstance();
                     appInfo.setField("appPath", appPath);
+                    appInfo.setField("signture", AppSignture.getSignture(context, appPath));
                     AssetManager assetManager = AppResources.getAssets(context, appPath);
                     try {
                         InputStream inputStream = assetManager.open("appbox.xml");

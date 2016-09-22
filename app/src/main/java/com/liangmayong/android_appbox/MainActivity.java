@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         if (info != null) {
             if (new File(info.getAppPath()).exists()) {
                 imageView.setImageDrawable(info.getIcon());
-                textView.setText(info.getLable());
+                textView.setText(info.getLable() + "\n" + info.getSignture());
             }
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
