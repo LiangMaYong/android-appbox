@@ -18,8 +18,8 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-//        String s = null;
-//        Toast.makeText(this,s.toString(),Toast.LENGTH_SHORT).show();
+        String s = null;
+        Toast.makeText(this, s.toString(), Toast.LENGTH_SHORT).show();
 
         int pid = android.os.Process.myPid();
         String processAppName = getAppName(pid);

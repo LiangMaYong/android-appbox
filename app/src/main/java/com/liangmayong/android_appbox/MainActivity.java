@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.textView);
         info = AppInfo.get(this, Preferences.getDefaultPreferences().getString(appName));
         initView();
-        startActivity(new Intent(this, Main2Activity.class));
+        //startActivity(new Intent(this, Main2Activity.class));
 //        startService(new Intent(this, MService.class));
     }
 

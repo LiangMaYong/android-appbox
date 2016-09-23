@@ -78,8 +78,7 @@ public final class AppContext extends Application {
         if (appPath == null || "".equals(appPath)) {
             return super.getApplicationContext();
         }
-        //return this;
-        return AppApplicationManager.handleCreateApplication(appPath);
+        return this;
     }
 
     /**
@@ -135,6 +134,9 @@ public final class AppContext extends Application {
      */
     @Override
     public Resources.Theme getTheme() {
+        if (appPath == null || "".equals(appPath)) {
+            return super.getTheme();
+        }
         if (mTheme == null) {
             mTheme = getResources().newTheme();
             mTheme.setTo(super.getTheme());
