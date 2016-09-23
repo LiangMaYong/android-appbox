@@ -17,6 +17,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Window;
 
+import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppExtras;
 import com.liangmayong.appbox.core.AppInfo;

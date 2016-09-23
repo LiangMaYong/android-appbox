@@ -355,7 +355,7 @@ public final class AppInstrumentation extends Instrumentation {
                 }
                 return proxyExecStartActivity(who, contextThread, token, target, targetIntent, requestCode, options);
             } catch (Exception error) {
-                AppLoger.getDefualt().error("The execStartActivity fail", e);
+                AppLoger.getDefualt().error("The execStartActivity fail", error);
                 return null;
             }
         }

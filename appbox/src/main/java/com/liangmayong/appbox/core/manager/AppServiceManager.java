@@ -61,29 +61,31 @@ public class AppServiceManager {
             service = (Service) AppClassLoader.getClassloader(appPath).loadClass(serviceName).newInstance();
         } catch (Exception e) {
         }
-        try {
-            Context ctx = AppContext.get(context, appPath);
-            AppMethod attachBaseContextMethod = new AppMethod(Service.class, service, "attachBaseContext", Context.class);
-            attachBaseContextMethod.invoke(ctx);
+        if (service != null) {
+            try {
+                Context ctx = AppContext.get(context, appPath);
+                AppMethod attachBaseContextMethod = new AppMethod(Service.class, service, "attachBaseContext", Context.class);
+                attachBaseContextMethod.invoke(ctx);
 
-            AppReflect.setField(Service.class, service, "mClassName", serviceName);
-            AppReflect.setField(Service.class, service, "mToken", new Binder());
-            AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(appPath));
-            AppReflect.setField(Service.class, service, "mStartCompatibility", ctx.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.ECLAIR);
+                AppReflect.setField(Service.class, service, "mClassName", serviceName);
+                AppReflect.setField(Service.class, service, "mToken", new Binder());
+                AppReflect.setField(Service.class, service, "mApplication", AppApplicationManager.handleCreateApplication(appPath));
+                AppReflect.setField(Service.class, service, "mStartCompatibility", ctx.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.ECLAIR);
 
-            Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-            Method currentActivityThreadMethod = activityThreadClass.getDeclaredMethod("currentActivityThread");
-            Object currentActivityThread = currentActivityThreadMethod.invoke(null);
-            AppReflect.setField(Service.class, service, "mThread", currentActivityThread);
+                Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+                Method currentActivityThreadMethod = activityThreadClass.getDeclaredMethod("currentActivityThread");
+                Object currentActivityThread = currentActivityThreadMethod.invoke(null);
+                AppReflect.setField(Service.class, service, "mThread", currentActivityThread);
 
-            Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
-            Method getDefaultMethod = activityManagerNativeClass.getDeclaredMethod("getDefault");
-            Object activityManager = getDefaultMethod.invoke(null);
-            AppReflect.setField(Service.class, service, "mActivityManager", activityManager);
-        } catch (Exception e) {
+                Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
+                Method getDefaultMethod = activityManagerNativeClass.getDeclaredMethod("getDefault");
+                Object activityManager = getDefaultMethod.invoke(null);
+                AppReflect.setField(Service.class, service, "mActivityManager", activityManager);
+            } catch (Exception e) {
+            }
+            service.onCreate();
+            STRING_SERVICE_MAP.put(key, service);
         }
-        service.onCreate();
-        STRING_SERVICE_MAP.put(key, service);
         return service;
     }
 }

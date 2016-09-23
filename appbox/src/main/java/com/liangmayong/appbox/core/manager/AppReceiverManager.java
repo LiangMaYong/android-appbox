@@ -31,7 +31,7 @@ public final class AppReceiverManager {
         if (STRING_LINKED_LIST_HASH_MAP.containsKey(key)) {
             LinkedList<BroadcastReceiver> receivers = STRING_LINKED_LIST_HASH_MAP.get(key);
             for (int i = 0; i < receivers.size(); i++) {
-                AppApplicationManager.handleCreateApplication(appPath).unregisterReceiver(receivers.get(i));
+                AppApplicationManager.getHostApplication().unregisterReceiver(receivers.get(i));
             }
             STRING_LINKED_LIST_HASH_MAP.remove(key);
         }

@@ -65,18 +65,12 @@ public final class AppContext extends Application {
 
     @Override
     public String getPackageName() {
-        if (appPath == null || "".equals(appPath)) {
-            return super.getPackageName();
-        }
-        return AppProcess.getCurrentProcessName(this);
+        return super.getPackageName();
     }
 
     @Override
     public ApplicationInfo getApplicationInfo() {
-        if (appPath == null || "".equals(appPath)) {
-            return super.getApplicationInfo();
-        }
-        return AppInfo.get(this, appPath).getApplicationInfo();
+        return super.getApplicationInfo();
     }
 
     @Override

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private String appName = "app2.apk";
+    private String appName = "PLPlayer.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         info = AppInfo.get(this, Preferences.getDefaultPreferences().getString(appName));
         initView();
         startActivity(new Intent(this, Main2Activity.class));
+//        startService(new Intent(this, MService.class));
     }
 
     private void initView() {

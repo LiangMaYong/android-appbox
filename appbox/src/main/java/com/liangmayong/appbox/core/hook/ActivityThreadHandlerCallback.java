@@ -37,17 +37,5 @@ public final class ActivityThreadHandlerCallback implements Handler.Callback {
     }
 
     private void handleLaunchActivity(Message msg) {
-//        try {
-//            Object obj = msg.obj;
-//            Field intent = obj.getClass().getDeclaredField("intent");
-//            intent.setAccessible(true);
-//            Intent raw = (Intent) intent.get(obj);
-//            if (raw != null && raw.hasExtra(AppConstant.INTENT_APP_PATH)) {
-//                String activityName = raw.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-//                raw.setComponent(new ComponentName(AppApplicationManager.handleCreateApplication(raw.getStringExtra(AppConstant.INTENT_APP_PATH)), activityName));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }
