@@ -1,16 +1,15 @@
 package com.liangmayong.android_appbox;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.liangmayong.appbox.AppboxCore;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
@@ -22,9 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageView imageView;
     private TextView textView;
     private AppInfo info = null;
+    private String appName = "universal.apk";
 
     private Handler mHandler = new Handler() {
         @Override
@@ -36,34 +35,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private String appName = "PLPlayer.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        imageView = (ImageView) findViewById(R.id.imageView);
         textView = (TextView) findViewById(R.id.textView);
         info = AppInfo.get(this, Preferences.getDefaultPreferences().getString(appName));
         initView();
-        //startActivity(new Intent(this, Main2Activity.class));
-//        startService(new Intent(this, MService.class));
+
+
     }
 
     private void initView() {
         if (info != null) {
             if (new File(info.getAppPath()).exists()) {
-                imageView.setImageDrawable(info.getIcon());
                 textView.setText(info.getLable() + "\n" + info.getSignture());
             }
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (info != null) {
-                        AppboxCore.getInstance().startActivity(MainActivity.this, info.getAppPath(), info.getMain());
-                    }
-                }
-            });
+            AppFragment frag = new AppFragment();
+            frag.setInfo(info);
+            commitFragment(frag, "AppboxFragment");
         } else {
             install();
         }
@@ -103,6 +94,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+
+    private Fragment mCurrentFragment;
+
+    private void commitFragment(Fragment fragment, String tag) {
+        if (mCurrentFragment != null
+                && mCurrentFragment.getClass() != null
+                && mCurrentFragment.getClass().getName() != null
+                && fragment.getClass() != null
+                && mCurrentFragment.getClass().getName().equals(fragment.getClass().getName())) {
+            return;
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (mCurrentFragment != null) {
+            fragmentTransaction.hide(mCurrentFragment);
+        }
+        if (fragmentManager.findFragmentByTag(tag) == null) {
+            fragmentTransaction.add(R.id.main_fragment, fragment, tag);
+        }
+        fragmentTransaction.show(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
+        mCurrentFragment = fragment;
     }
 
 }

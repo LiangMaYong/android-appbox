@@ -2,4 +2,5 @@
 <appbox>
     <!-- this is you plugin main activity class name-->
     <main></main>
+    <main-view>.ViewDemo</main-view>
 </appbox>

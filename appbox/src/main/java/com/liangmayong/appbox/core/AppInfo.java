@@ -137,6 +137,16 @@ public final class AppInfo {
     }
 
     /**
+     * getMainView
+     *
+     * @return view
+     */
+    public String getMainView() {
+        String mainView = getConfigure("main-view");
+        return replaceClassName(mainView);
+    }
+
+    /**
      * getMain
      *
      * @return main
