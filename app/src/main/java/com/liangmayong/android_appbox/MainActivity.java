@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private String appName = "PLPlayer.apk";
+    private String appName = "universal.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,19 +77,17 @@ public class MainActivity extends AppCompatActivity {
                     File dexTemp = getDir("appbox", Context.MODE_PRIVATE);
                     dexTemp.mkdirs();
                     File pluginTemp = new File(dexTemp, appName);
-                    if (!pluginTemp.exists()) {
-                        out = new FileOutputStream(pluginTemp);
-                        byte[] buffer = new byte[4096];
-                        int read;
-                        while ((read = inputStream.read(buffer)) != -1) {
-                            out.write(buffer, 0, read);
-                        }
-                        inputStream.close();
-                        inputStream = null;
-                        out.flush();
-                        out.close();
-                        out = null;
+                    out = new FileOutputStream(pluginTemp);
+                    byte[] buffer = new byte[4096];
+                    int read;
+                    while ((read = inputStream.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
                     }
+                    inputStream.close();
+                    inputStream = null;
+                    out.flush();
+                    out.close();
+                    out = null;
                     AppInfo info = AppInfo.get(MainActivity.this, pluginTemp.getPath());
                     AppNative.copyNativeLibrary(info.getAppPath());
                     AppClassLoader.add(info.getAppPath());
