@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppExtras;
@@ -14,7 +13,7 @@ import com.liangmayong.appbox.core.manager.AppServiceManager;
  * Created by LiangMaYong on 2016/9/19.
  */
 public class BoxService extends Service {
-    @Nullable
+
     @Override
     public IBinder onBind(Intent intent) {
         if (intent != null && intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {

@@ -19,7 +19,7 @@ public final class ActivityThreadHandlerCallback implements Handler.Callback {
         mBase = base;
         mContext = context;
         try {
-            LAUNCH_ACTIVITY = (int) AppReflect.getField(Class.forName("android.app.ActivityThread$H"), null, "LAUNCH_ACTIVITY");
+            LAUNCH_ACTIVITY = (Integer) AppReflect.getField(Class.forName("android.app.ActivityThread$H"), null, "LAUNCH_ACTIVITY");
         } catch (Exception e) {
             LAUNCH_ACTIVITY = 100;
         }
