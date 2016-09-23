@@ -6,6 +6,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import com.liangmayong.appbox.core.utils.MD5;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ public final class AppResources extends Resources {
     private static Method ADD_ASSET_PATH_METHOD = null;
 
     public static AssetManager getAssets(Context context, String appPath) {
-        String key = "asset_" + appPath;
+        String key = MD5.encrypt("key_" + appPath);
         if (STRING_ASSET_MANAGER_HASH_MAP.containsKey(key)) {
             return STRING_ASSET_MANAGER_HASH_MAP.get(key);
         }
@@ -48,13 +50,12 @@ public final class AppResources extends Resources {
      * @param appPath appPath
      */
     public static void remove(String appPath) {
-        String reskey = "resources_" + appPath;
-        if (STRING_RESOURCES_HASH_MAP.containsKey(reskey)) {
-            STRING_RESOURCES_HASH_MAP.remove(reskey);
+        String key = MD5.encrypt("key_" + appPath);
+        if (STRING_RESOURCES_HASH_MAP.containsKey(key)) {
+            STRING_RESOURCES_HASH_MAP.remove(key);
         }
-        String assetkey = "asset_" + appPath;
-        if (STRING_ASSET_MANAGER_HASH_MAP.containsKey(assetkey)) {
-            STRING_ASSET_MANAGER_HASH_MAP.remove(assetkey);
+        if (STRING_ASSET_MANAGER_HASH_MAP.containsKey(key)) {
+            STRING_ASSET_MANAGER_HASH_MAP.remove(key);
         }
     }
 
@@ -68,7 +69,7 @@ public final class AppResources extends Resources {
         if (appPath == null || "".equals(appPath)) {
             return context.getResources();
         }
-        String key = "resources_" + appPath;
+        String key = MD5.encrypt("key_" + appPath);
         if (STRING_RESOURCES_HASH_MAP.containsKey(key)) {
             return STRING_RESOURCES_HASH_MAP.get(key);
         }

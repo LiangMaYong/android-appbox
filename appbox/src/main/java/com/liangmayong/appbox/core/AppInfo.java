@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.graphics.drawable.Drawable;
 
 import com.liangmayong.appbox.core.parser.AppParser;
+import com.liangmayong.appbox.core.utils.MD5;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public final class AppInfo {
         if (appPath == null || "".equals(appPath)) {
             return null;
         }
-        String key = "appinfo_" + appPath;
+        String key = MD5.encrypt("key_" + appPath);
         if (STRING_APP_INFO_MAP.containsKey(key)) {
             return STRING_APP_INFO_MAP.get(key);
         }

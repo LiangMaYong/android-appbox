@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
@@ -33,6 +35,13 @@ public final class AppContext extends Application {
     public static Context get(Context base, String appPath) {
         if (base instanceof AppContext) {
             base = ((AppContext) base).getBaseContext();
+            AppReflect.setField(base.getClass(), base, "mBasePackageName", AppApplicationManager.getHostApplication().getPackageName());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                AppReflect.setField(base.getClass(), base, "mOpPackageName", AppApplicationManager.getHostApplication().getPackageName());
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                AppReflect.setField(base.getClass(), base, "mPackageName", AppApplicationManager.getHostApplication().getPackageName());
+            }
         }
         AppContext context = new AppContext(base);
         context.setAppPath(appPath);
@@ -52,6 +61,22 @@ public final class AppContext extends Application {
         } catch (Exception e) {
         }
         AppContextModifier.setOuterContext(base, this);
+    }
+
+    @Override
+    public String getPackageName() {
+        if (appPath == null || "".equals(appPath)) {
+            return super.getPackageName();
+        }
+        return AppProcess.getCurrentProcessName(this);
+    }
+
+    @Override
+    public ApplicationInfo getApplicationInfo() {
+        if (appPath == null || "".equals(appPath)) {
+            return super.getApplicationInfo();
+        }
+        return AppInfo.get(this, appPath).getApplicationInfo();
     }
 
     @Override

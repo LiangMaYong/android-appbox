@@ -1,6 +1,7 @@
 package com.liangmayong.android_appbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,12 +31,12 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             info = (AppInfo) msg.obj;
-            Preferences.getDefaultPreferences().setString("path", info.getAppPath());
+            Preferences.getDefaultPreferences().setString(appName, info.getAppPath());
             initView();
         }
     };
 
-    private String appName = "universal.apk";
+    private String appName = "app2.apk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
         textView = (TextView) findViewById(R.id.textView);
-        info = AppInfo.get(this, Preferences.getDefaultPreferences().getString("path"));
+        info = AppInfo.get(this, Preferences.getDefaultPreferences().getString(appName));
         initView();
+        startActivity(new Intent(this, Main2Activity.class));
     }
 
     private void initView() {

@@ -9,6 +9,7 @@ import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppMethod;
 import com.liangmayong.appbox.core.AppReflect;
+import com.liangmayong.appbox.core.utils.MD5;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -27,8 +28,9 @@ public class AppServiceManager {
      * @param appPath appPath
      */
     public static void remove(String appPath) {
+        String key = MD5.encrypt("key_" + appPath);
         for (Map.Entry<String, Service> entry : STRING_SERVICE_MAP.entrySet()) {
-            if (entry.getKey().startsWith("service_" + appPath)) {
+            if (entry.getKey().startsWith(key)) {
                 STRING_SERVICE_MAP.remove(entry.getKey());
                 entry.getValue().onDestroy();
             }
@@ -49,7 +51,7 @@ public class AppServiceManager {
     }
 
     public static Service handleCreateService(Context context, String appPath, String serviceName) {
-        String key = "service_" + appPath + serviceName;
+        String key = MD5.encrypt("key_" + appPath) + serviceName;
 
         if (STRING_SERVICE_MAP.containsKey(key)) {
             return STRING_SERVICE_MAP.get(key);

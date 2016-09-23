@@ -11,8 +11,10 @@ import android.os.Bundle;
 
 import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppContext;
+import com.liangmayong.appbox.core.AppCrashHandler;
 import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.AppInstrumentation;
+import com.liangmayong.appbox.core.AppProcess;
 import com.liangmayong.appbox.core.AppReflect;
 import com.liangmayong.appbox.core.box.BoxActivity;
 import com.liangmayong.appbox.core.box.BoxService;
@@ -56,6 +58,9 @@ public class AppboxCore {
         }
         if (application == null) {
             return false;
+        }
+        if ((application.getPackageName() + ":appbox").equals(AppProcess.getCurrentProcessName(application))) {
+            AppCrashHandler.getInstance().init();
         }
         AppHookHandler.hook(application);
         try {

@@ -2,14 +2,16 @@ package com.liangmayong.appbox.core.manager;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppContext;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppLoger;
 import com.liangmayong.appbox.core.AppMethod;
+import com.liangmayong.appbox.core.AppProcess;
+import com.liangmayong.appbox.core.utils.MD5;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,7 @@ import java.util.Map;
  */
 public class AppApplicationManager {
 
-    private static final Map<String, Application> STRING_SERVICE_MAP = new HashMap<String, Application>();
+    private static final Map<String, Application> STRING_APPLICATION_HASH_MAP = new HashMap<String, Application>();
 
     /**
      * remove
@@ -27,9 +29,9 @@ public class AppApplicationManager {
      * @param appPath appPath
      */
     public static void remove(String appPath) {
-        String key = "application_" + appPath;
-        if (STRING_SERVICE_MAP.containsKey(key)) {
-            STRING_SERVICE_MAP.remove(key);
+        String key = MD5.encrypt("key_" + appPath);
+        if (STRING_APPLICATION_HASH_MAP.containsKey(key)) {
+            STRING_APPLICATION_HASH_MAP.remove(key);
         }
     }
 
@@ -41,12 +43,17 @@ public class AppApplicationManager {
      */
     public static Application handleCreateApplication(final String appPath) {
         Context context = getHostApplication();
-        String key = "application_" + appPath;
-        if (STRING_SERVICE_MAP.containsKey(key)) {
-            return STRING_SERVICE_MAP.get(key);
+        String key = MD5.encrypt("key_" + appPath);
+        Log.e("TAG", AppProcess.getCurrentProcessName(context));
+        Log.e("TAG", key + " ---------------------------------------0");
+        Log.e("TAG", STRING_APPLICATION_HASH_MAP + "");
+        if (STRING_APPLICATION_HASH_MAP.containsKey(key)) {
+            return STRING_APPLICATION_HASH_MAP.get(key);
         }
+        Log.e("TAG", key + " ---------------------------------------1");
         Application application = null;
         AppInfo info = AppInfo.get(context, appPath);
+        Log.e("TAG", key + " ---------------------------------------2");
         if (info == null) {
             application = getHostApplication();
         } else {
@@ -70,13 +77,13 @@ public class AppApplicationManager {
                 application = (Application) ctx;
             }
         }
-        STRING_SERVICE_MAP.put(key, application);
+        Log.e("TAG", key + " ---------------------------------------3");
         return application;
     }
 
 
     // application
-    private static WeakReference<Application> application = null;
+    private static Application application = null;
 
     /**
      * getApplication
@@ -84,7 +91,7 @@ public class AppApplicationManager {
      * @return application
      */
     public static Application getHostApplication() {
-        if (application == null || application.get() == null) {
+        if (application == null) {
             synchronized (AppApplicationManager.class) {
                 if (application == null) {
                     try {
@@ -95,7 +102,7 @@ public class AppApplicationManager {
                             if (object != null) {
                                 Method getApplication = object.getClass().getDeclaredMethod("getApplication");
                                 if (getApplication != null) {
-                                    application = new WeakReference<Application>((Application) getApplication.invoke(object));
+                                    application = (Application) getApplication.invoke(object);
                                 }
                             }
                         }
@@ -104,6 +111,6 @@ public class AppApplicationManager {
                 }
             }
         }
-        return application.get();
+        return application;
     }
 }

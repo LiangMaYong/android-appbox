@@ -1,6 +1,7 @@
 package com.liangmayong.appbox.core;
 
 import com.liangmayong.appbox.AppboxCore;
+import com.liangmayong.appbox.core.utils.MD5;
 
 import java.io.File;
 import java.util.HashMap;
@@ -42,8 +43,9 @@ public final class AppClassLoader {
      * @param appPath appPath
      */
     public static void remove(String appPath) {
-        if (CLASS_LOADER_MAP.containsKey(appPath)) {
-            CLASS_LOADER_MAP.remove(appPath);
+        String key = MD5.encrypt("key_" + appPath);
+        if (CLASS_LOADER_MAP.containsKey(key)) {
+            CLASS_LOADER_MAP.remove(key);
         }
     }
 
@@ -66,13 +68,14 @@ public final class AppClassLoader {
         if (appPath == null || "".equals(appPath) || !(new File(appPath).exists())) {
             return AppClassLoader.class.getClassLoader();
         }
+        String key = MD5.encrypt("key_" + appPath);
         ClassLoader classLoader = null;
-        if (CLASS_LOADER_MAP.containsKey(appPath)) {
-            classLoader = CLASS_LOADER_MAP.get(appPath);
+        if (CLASS_LOADER_MAP.containsKey(key)) {
+            classLoader = CLASS_LOADER_MAP.get(key);
         } else {
             classLoader = newPluginDexLoader(appPath);
             if (classLoader != null) {
-                CLASS_LOADER_MAP.put(appPath, classLoader);
+                CLASS_LOADER_MAP.put(key, classLoader);
             }
         }
         return classLoader;

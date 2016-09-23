@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppReflect;
+import com.liangmayong.appbox.core.utils.MD5;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ public final class AppReceiverManager {
      * @param appPath appPath
      */
     public static void unregisterReceiver(String appPath) {
-        String key = "receiver_" + appPath;
+        String key = MD5.encrypt("key_" + appPath);
         if (STRING_LINKED_LIST_HASH_MAP.containsKey(key)) {
             LinkedList<BroadcastReceiver> receivers = STRING_LINKED_LIST_HASH_MAP.get(key);
             for (int i = 0; i < receivers.size(); i++) {
@@ -42,7 +43,7 @@ public final class AppReceiverManager {
      * @param appPath appPath
      */
     public static void registerReceiver(String appPath) {
-        String key = "receiver_" + appPath;
+        String key = MD5.encrypt("key_" + appPath);
         if (STRING_LINKED_LIST_HASH_MAP.containsKey(key)) {
             return;
         }
