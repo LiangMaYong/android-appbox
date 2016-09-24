@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             if (new File(info.getAppPath()).exists()) {
                 textView.setText(info.getLable() + "\n" + info.getSignture());
             }
-            AppFragment frag = new AppFragment();
+            MainFragment frag = new MainFragment();
             frag.setInfo(info);
             commitFragment(frag, "AppboxFragment");
         } else {

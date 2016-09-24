@@ -7,7 +7,7 @@ import com.liangmayong.appbox.AppboxCore;
 /**
  * Created by liangmayong on 2016/9/18.
  */
-public class App extends Application {
+public class MainApplication extends Application {
 
     @Override
     public void onCreate() {
