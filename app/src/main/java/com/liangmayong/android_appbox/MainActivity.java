@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppNative;
+import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
 
 import java.io.File;
@@ -20,7 +21,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private TextView textView;
     private AppInfo info = null;
     private String appName = "universal.apk";
