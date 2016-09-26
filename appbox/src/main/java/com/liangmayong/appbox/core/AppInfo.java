@@ -6,8 +6,11 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import com.liangmayong.appbox.core.manager.AppApplicationManager;
 import com.liangmayong.appbox.core.parser.AppParser;
 import com.liangmayong.appbox.core.utils.MD5;
 
@@ -254,6 +257,51 @@ public final class AppInfo {
      */
     public boolean setField(String fieldName, Object value) {
         return AppReflect.setField(getClass(), this, fieldName, value);
+    }
+
+    /**
+     * getClassLoader
+     *
+     * @return classloader
+     */
+    public ClassLoader getClassLoader() {
+        return AppClassLoader.getClassloader(getAppPath());
+    }
+
+    /**
+     * getResources
+     *
+     * @return Resources
+     */
+    public Resources getResources(Context context) {
+        return AppResources.getResources(context, getAppPath());
+    }
+
+    /**
+     * getAssets
+     *
+     * @return AssetManager
+     */
+    public AssetManager getAssets(Context context) {
+        return AppResources.getAssets(context, getAppPath());
+    }
+
+    /**
+     * getApplication
+     *
+     * @return Application
+     */
+    public Application getApplication() {
+        return AppApplicationManager.handleCreateApplication(getAppPath());
+    }
+
+    /**
+     * getAppContext
+     *
+     * @return context
+     */
+    public Context getAppContext(Context base) {
+        return AppContext.get(base, getAppPath());
     }
 
     @Override
