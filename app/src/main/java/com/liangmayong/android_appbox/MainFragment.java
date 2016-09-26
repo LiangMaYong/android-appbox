@@ -13,7 +13,7 @@ import com.liangmayong.appbox.core.AppInfo;
 /**
  * Created by LiangMaYong on 2016/9/23.
  */
-public class AppFragment extends Fragment {
+public class MainFragment extends Fragment {
 
     AppInfo info = null;
 
