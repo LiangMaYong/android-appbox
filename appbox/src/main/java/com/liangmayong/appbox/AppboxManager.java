@@ -1,4 +1,4 @@
-package com.liangmayong.appbox.manager;
+package com.liangmayong.appbox;
 
 /**
  * Created by LiangMaYong on 2016/9/29.

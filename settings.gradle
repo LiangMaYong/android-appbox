@@ -1,1 +1,1 @@
-include ':app', ':appbox', ':appbox-bundle', ':appbox-manager'
+include ':app', ':appbox', ':appbox-bundle'

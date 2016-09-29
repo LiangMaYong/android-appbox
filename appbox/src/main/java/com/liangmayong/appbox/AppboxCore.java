@@ -9,6 +9,8 @@ import com.liangmayong.appbox.core.AppInstrumentation;
 import com.liangmayong.appbox.core.AppProcess;
 import com.liangmayong.appbox.core.AppReflect;
 
+import org.litepal.LitePalApplication;
+
 /**
  * Created by LiangMaYong on 2016/9/18.
  */
@@ -62,6 +64,7 @@ public class AppboxCore {
             AppCrashHandler.getInstance().init();
         }
         AppHookHandler.hook(application);
+        LitePalApplication.initialize(application);
         try {
             Object loadedApk = AppReflect.getField(Application.class, application, "mLoadedApk");
             if (loadedApk != null) {

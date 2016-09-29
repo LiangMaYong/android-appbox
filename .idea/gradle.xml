@@ -11,7 +11,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appbox" />
             <option value="$PROJECT_DIR$/appbox-bundle" />
-            <option value="$PROJECT_DIR$/appbox-manager" />
           </set>
         </option>
         <option name="myModules">
@@ -20,7 +19,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appbox" />
             <option value="$PROJECT_DIR$/appbox-bundle" />
-            <option value="$PROJECT_DIR$/appbox-manager" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -14,6 +14,7 @@ import com.liangmayong.appbox.core.AppFragment;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppNative;
+import com.liangmayong.appbox.manager.litepal.AppDataSupport;
 import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
 import com.liangmayong.skin.Skin;
@@ -51,12 +52,14 @@ public class MainActivity extends BaseActivity {
 
     private void initView() {
         if (info != null) {
+            AppDataSupport.save(this, info.getAppPath());
             if (new File(info.getAppPath()).exists()) {
                 textView.setText(info.getLable() + "\n" + info.getSignture());
                 Bundle bundle = new Bundle();
                 bundle.putString("name", "lmy");
                 AppLauncher.startActivity(this, info.getAppPath(), info.getMain(), bundle);
             }
+            showToast(AppDataSupport.findByAppPath(this, info.getAppPath()) + "");
             AppFragment frag = new AppFragment(info);
             commitFragment(frag, "AppboxFragment");
         } else {
