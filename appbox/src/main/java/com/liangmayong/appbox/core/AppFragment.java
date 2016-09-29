@@ -17,30 +17,40 @@ import com.liangmayong.appbox.AppboxCore;
 public class AppFragment extends Fragment {
 
     // info
-    private AppInfo info = null;
+    private final AppInfo info;
     // fragmentView
-    private AppFragmentView fragmentView;
+    private FragmentView fragmentView;
 
-    /**
-     * setAppInfo
-     *
-     * @param info info
-     */
-    public void setAppInfo(AppInfo info) {
+    public AppFragment(AppInfo info) {
         this.info = info;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (info != null) {
+            if (AppboxCore.getInstance().isInited()) {
+                try {
+                    fragmentView = new FragmentView(getActivity(), info.getAppPath(), info.getMainView());
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (fragmentView != null) {
+            fragmentView.onCreate(savedInstanceState);
+        }
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (info != null) {
-            if (AppboxCore.getInstance().isInited()) {
-                try {
-                    fragmentView = new AppFragmentView(getActivity(), info.getAppPath(), info.getMainView(), null);
-                    return fragmentView.getView();
-                } catch (Exception e) {
-                }
-            }
+        if (fragmentView != null) {
+            return fragmentView.getView();
         }
         return null;
     }
@@ -64,7 +74,7 @@ public class AppFragment extends Fragment {
     @Override
     public void onStop() {
         if (fragmentView != null) {
-            fragmentView.onStart();
+            fragmentView.onStop();
         }
         super.onStop();
     }
@@ -91,22 +101,38 @@ public class AppFragment extends Fragment {
         if (fragmentView != null) {
             fragmentView.onDestroy();
         }
+        fragmentView = null;
         super.onDestroy();
     }
 
+    @Override
+    public void onResume() {
+        if (fragmentView != null) {
+            fragmentView.onResume();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void setArguments(Bundle args) {
+        if (fragmentView != null) {
+            fragmentView.setArguments(args);
+        }
+        super.setArguments(args);
+    }
+
     /**
-     * AppFragmentView
+     * FragmentView
      */
-    private static final class AppFragmentView {
+    private static final class FragmentView {
 
         private Object mBase = null;
 
-        public AppFragmentView(Activity activity, String appPath, String viewName, Bundle extras) throws Exception {
+        public FragmentView(Activity activity, String appPath, String viewName) throws Exception {
             try {
                 mBase = AppClassLoader.getClassloader(appPath).loadClass(viewName).newInstance();
-                AppContextThemeWrapper themeWrapper = new AppContextThemeWrapper();
-                themeWrapper.attach(AppContext.get(activity, appPath));
-                new AppMethod(mBase.getClass(), mBase, "onAttach", Activity.class, Context.class, Bundle.class).invoke(activity, themeWrapper, extras);
+                new AppMethod(mBase.getClass(), mBase, "attachBaseContext", Context.class).invoke(AppContext.get(activity, appPath));
+                new AppMethod(mBase.getClass(), mBase, "onAttach", Activity.class).invoke(activity);
             } catch (Exception e) {
                 throw e;
             }
@@ -118,6 +144,26 @@ public class AppFragment extends Fragment {
                 return view;
             } catch (Exception e) {
                 return null;
+            }
+        }
+
+
+        /**
+         * setExtras
+         *
+         * @param extras extras
+         */
+        public final void setArguments(Bundle extras) {
+            try {
+                new AppMethod(mBase.getClass(), mBase, "setArguments", Bundle.class).invoke(extras);
+            } catch (Exception e) {
+            }
+        }
+
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            try {
+                new AppMethod(mBase.getClass(), mBase, "onCreate", Bundle.class).invoke(savedInstanceState);
+            } catch (Exception e) {
             }
         }
 

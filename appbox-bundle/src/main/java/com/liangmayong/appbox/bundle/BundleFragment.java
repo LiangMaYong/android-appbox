@@ -2,29 +2,56 @@ package com.liangmayong.appbox.bundle;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
 /**
  * Created by LiangMaYong on 2016/9/23.
  */
-public abstract class BundleFragmentView {
+public abstract class BundleFragment extends ContextThemeWrapper {
 
     // mActivity
     private Activity mActivity;
     // mView
     private View mView;
-    // mContext
-    private Context mContext;
     // mExtras
     private Bundle mExtras;
 
-    protected void onAttach(Activity activity, Context context, Bundle extras) {
+    @Override
+    protected final void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+    }
+
+    /**
+     * attachActivity
+     *
+     * @param activity activity
+     */
+    protected void onAttach(Activity activity) {
         this.mActivity = activity;
-        this.mContext = context;
+    }
+
+    /**
+     * setArguments
+     *
+     * @param extras extras
+     */
+    public final void setArguments(Bundle extras) {
         this.mExtras = extras;
+    }
+
+    /**
+     * getArguments
+     *
+     * @return extras
+     */
+    protected Bundle getArguments() {
+        if (mExtras == null) {
+            return new Bundle();
+        }
+        return new Bundle(mExtras);
     }
 
     /**
@@ -32,26 +59,17 @@ public abstract class BundleFragmentView {
      *
      * @return activity
      */
-    protected Activity getHostActivity() {
+    protected final Activity getHostActivity() {
         return mActivity;
     }
 
     /**
-     * getBundleContext
+     * getContext
      *
      * @return context
      */
-    protected Context getBundleContext() {
-        return mContext;
-    }
-
-    /**
-     * getExtras
-     *
-     * @return extras
-     */
-    protected Bundle getExtras() {
-        return mExtras;
+    public Context getContext() {
+        return this;
     }
 
     /**
@@ -59,10 +77,10 @@ public abstract class BundleFragmentView {
      *
      * @return view
      */
-    public View getView() {
+    public final View getView() {
         if (mView == null) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getHostActivity()).cloneInContext(getBundleContext());
-            mView = onCreateView(getBundleContext(), layoutInflater);
+            LayoutInflater layoutInflater = LayoutInflater.from(getHostActivity()).cloneInContext(this);
+            mView = onCreateView(this, layoutInflater);
         }
         return mView;
     }
@@ -75,6 +93,14 @@ public abstract class BundleFragmentView {
      * @return view
      */
     protected abstract View onCreateView(Context context, LayoutInflater inflater);
+
+    /**
+     * onCreate
+     *
+     * @param savedInstanceState savedInstanceState
+     */
+    public void onCreate(Bundle savedInstanceState) {
+    }
 
     /**
      * onStart
@@ -107,34 +133,10 @@ public abstract class BundleFragmentView {
     }
 
     /**
-     * startActivity
-     *
-     * @param intent intent
-     */
-    public void startActivity(Intent intent) {
-        getBundleContext().startActivity(intent);
-    }
-
-    /**
-     * startActivity
-     *
-     * @param cls    cls
-     * @param extras extras
-     */
-    public void startActivity(Class<? extends Activity> cls, Bundle extras) {
-        Intent intent = new Intent(getBundleContext(), cls);
-        if (extras != null) {
-            intent.putExtras(extras);
-        }
-        getBundleContext().startActivity(intent);
-    }
-
-    /**
      * onDetach
      */
     public void onDetach() {
         mActivity = null;
-        mContext = null;
         mExtras = null;
     }
 

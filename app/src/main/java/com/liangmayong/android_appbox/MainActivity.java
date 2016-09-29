@@ -9,10 +9,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.TextView;
 
-import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppFragment;
 import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppNative;
 import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
@@ -57,8 +57,7 @@ public class MainActivity extends BaseActivity {
                 bundle.putString("name", "lmy");
                 AppLauncher.startActivity(this, info.getAppPath(), info.getMain(), bundle);
             }
-            AppFragment frag = new AppFragment();
-            frag.setAppInfo(info);
+            AppFragment frag = new AppFragment(info);
             commitFragment(frag, "AppboxFragment");
         } else {
             install();
