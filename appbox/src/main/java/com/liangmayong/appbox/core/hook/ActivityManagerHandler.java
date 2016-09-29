@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
 
-import com.liangmayong.appbox.core.box.BoxActivity;
 import com.liangmayong.appbox.core.box.BoxService;
 import com.liangmayong.appbox.core.modifiers.AppIntentModifier;
 
@@ -29,12 +28,7 @@ public class ActivityManagerHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if ("startActivity".equals(method.getName()) || "startActivityAndWait".equals(method.getName()) || "startActivityWithConfig".equals(method.getName()) || "startActivityIntentSender".equals(method.getName())) {
-            Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
-            Intent intent = integerIntentPair.second;
-            Intent targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxActivity.class.getName()), false);
-            args[integerIntentPair.first] = targetIntent;
-        } else if ("startService".equals(method.getName()) || "bindService".equals(method.getName())) {
+        if ("startService".equals(method.getName()) || "bindService".equals(method.getName())) {
             Pair<Integer, Intent> integerIntentPair = foundFirstIntentOfArgs(args);
             Intent intent = integerIntentPair.second;
             Intent targetIntent = AppIntentModifier.modify(intent, null, new ComponentName(mContext.getPackageName(), BoxService.class.getName()), false);

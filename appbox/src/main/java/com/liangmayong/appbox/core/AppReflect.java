@@ -1,6 +1,8 @@
 package com.liangmayong.appbox.core;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by liangmayong on 2016/9/18.
@@ -77,4 +79,51 @@ public final class AppReflect {
         }
         return null;
     }
+
+
+    /**
+     * getFields
+     *
+     * @param clazz  clazz
+     * @param object object
+     * @return fields
+     */
+    public static Map<String, Object> getFields(Class<?> clazz, Object object) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (clazz != null) {
+            for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
+                Field[] fields = clazz.getDeclaredFields();
+                if (fields != null && fields.length > 0) {
+                    for (int i = 0; i < fields.length; i++) {
+                        Object value = null;
+                        try {
+                            fields[i].setAccessible(true);
+                            value = fields[i].get(object);
+                        } catch (Exception e1) {
+                        }
+                        map.put(fields[i].getName(), value);
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * cloneModel
+     *
+     * @param object       object
+     * @param targetObject targetObject
+     */
+    public static void cloneModel(Object object, Object targetObject) {
+        if (object != null) {
+            Map<String, Object> fields = getFields(object.getClass(), object);
+            if (fields != null && !fields.isEmpty()) {
+                for (Map.Entry<String, Object> entry : fields.entrySet()) {
+                    setField(targetObject.getClass(), targetObject, entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
 }

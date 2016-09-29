@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/android-appbox.iml" filepath="$PROJECT_DIR$/android-appbox.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/appbox/appbox.iml" filepath="$PROJECT_DIR$/appbox/appbox.iml" />
+      <module fileurl="file://$PROJECT_DIR$/appbox-bundle/appbox-bundle.iml" filepath="$PROJECT_DIR$/appbox-bundle/appbox-bundle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/appbox-manager/appbox-manager.iml" filepath="$PROJECT_DIR$/appbox-manager/appbox-manager.iml" />
     </modules>
   </component>
 </project>

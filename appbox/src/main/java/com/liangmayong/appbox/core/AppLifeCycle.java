@@ -1,11 +1,9 @@
 package com.liangmayong.appbox.core;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.liangmayong.appbox.core.box.BoxActivity;
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
 
@@ -121,6 +119,15 @@ public final class AppLifeCycle {
             ACTIVITIES.add(target);
         }
         String appPath = getAppPathByActivity(target);
+
+        if (target.getPackageName().equals(AppProcess.getCurrentProcessName(target))) {
+            Bundle bundle = AppExtras.getExtras(appPath, target.getClass().getName());
+            if (bundle != null) {
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+                target.setIntent(intent);
+            }
+        }
         AppActivityModifier.modify(target, appPath);
         //Log.e("TAG", LayoutInflater.from(target).getContext().getClass().getName());
         if (appPath != null && !"".equals(appPath)) {
@@ -240,37 +247,6 @@ public final class AppLifeCycle {
             }
         }
         currentActivity = target;
-    }
-
-    protected static Intent handlerStartActivity(Context who, Activity target, Intent intent, boolean replace) {
-        Intent targetIntent = null;
-        if (replace || intent.hasExtra(AppConstant.INTENT_APP_PATH) || target.getIntent().hasExtra(AppConstant.INTENT_APP_PATH)) {
-            String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
-            if (path == null || "".equals(path)) {
-                path = target.getIntent().getStringExtra(AppConstant.INTENT_APP_PATH);
-                if (path == null) {
-                    path = "";
-                }
-            }
-            String activityName = "";
-            if (intent.hasExtra(AppConstant.INTENT_APP_LAUNCH)) {
-                activityName = intent.getStringExtra(AppConstant.INTENT_APP_LAUNCH);
-            } else {
-                activityName = intent.getComponent().getClassName();
-            }
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                AppExtras.saveExtras(path, activityName, extras);
-            }
-            Intent newIntent = new Intent();
-            newIntent.setClassName(who, BoxActivity.class.getName());
-            newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
-            newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, activityName);
-            targetIntent = newIntent;
-        } else {
-            targetIntent = intent;
-        }
-        return targetIntent;
     }
 
     protected static Activity newActivity(ClassLoader cl, String className, Intent intent) {

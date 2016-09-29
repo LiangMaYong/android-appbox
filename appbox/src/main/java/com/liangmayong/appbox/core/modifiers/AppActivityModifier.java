@@ -12,15 +12,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Window;
 
-import com.liangmayong.appbox.core.AppConstant;
 import com.liangmayong.appbox.core.AppContext;
-import com.liangmayong.appbox.core.AppExtras;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppLayoutInflater;
 import com.liangmayong.appbox.core.AppLoger;
@@ -41,12 +37,6 @@ public class AppActivityModifier {
     private static String currentPath = "";
 
     public static void modify(Activity target, String path) {
-        Bundle bundle = AppExtras.getExtras(path, target.getClass().getName());
-        if (bundle != null) {
-            Intent intent = new Intent();
-            intent.putExtras(bundle);
-            target.setIntent(intent);
-        }
         if (!currentPath.equals(path)) {
             currentPath = path == null ? "" : path;
             //clear LayoutInflater cache

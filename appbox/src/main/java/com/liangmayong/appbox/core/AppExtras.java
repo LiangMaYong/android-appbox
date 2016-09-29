@@ -38,7 +38,7 @@ public final class AppExtras {
     }
 
     /**
-     * getExtras
+     * getmExtras
      *
      * @param act act
      * @return extras

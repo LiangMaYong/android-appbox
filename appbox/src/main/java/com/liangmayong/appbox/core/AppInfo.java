@@ -10,6 +10,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import com.liangmayong.appbox.AppboxCore;
 import com.liangmayong.appbox.core.manager.AppApplicationManager;
 import com.liangmayong.appbox.core.parser.AppParser;
 import com.liangmayong.appbox.core.utils.MD5;
@@ -293,6 +294,25 @@ public final class AppInfo {
      */
     public Application getApplication() {
         return AppApplicationManager.handleCreateApplication(getAppPath());
+    }
+
+    /**
+     * getModel
+     *
+     * @param clazz     clazz
+     * @param className className
+     * @param <T>       type
+     * @return model
+     */
+    public <T> T getModel(Class<T> clazz, String className) {
+        if (!AppboxCore.getInstance().isInited()) {
+            return null;
+        }
+        if (clazz != null) {
+            AppModelBuilder<T> builder = new AppModelBuilder<T>(clazz);
+            return builder.getModel(getAppPath(), className);
+        }
+        return null;
     }
 
     /**
