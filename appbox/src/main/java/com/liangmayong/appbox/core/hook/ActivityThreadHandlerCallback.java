@@ -29,10 +29,8 @@ public final class ActivityThreadHandlerCallback implements Handler.Callback {
     public boolean handleMessage(final Message msg) {
         if (msg.what == LAUNCH_ACTIVITY) {
             handleLaunchActivity(msg);
-            mBase.handleMessage(msg);
-        } else {
-            mBase.handleMessage(msg);
         }
+        mBase.handleMessage(msg);
         return true;
     }
 
