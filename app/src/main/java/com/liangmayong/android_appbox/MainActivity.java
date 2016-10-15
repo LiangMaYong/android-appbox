@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppFragment;
 import com.liangmayong.appbox.core.AppInfo;
-import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppNative;
 import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
@@ -26,7 +25,7 @@ import java.io.OutputStream;
 public class MainActivity extends BaseActivity {
     private TextView textView;
     private AppInfo info = null;
-    private String appName = "base1.apk";
+    private String appName = "base.apk";
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
