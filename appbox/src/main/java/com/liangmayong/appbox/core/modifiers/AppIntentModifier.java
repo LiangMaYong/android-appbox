@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.liangmayong.appbox.core.AppConstant;
-import com.liangmayong.appbox.core.AppExtras;
 
 /**
  * Created by LiangMaYong on 2016/9/22.
@@ -35,15 +34,13 @@ public class AppIntentModifier {
                 launch = intent.getComponent().getClassName();
             }
             Bundle extras = intent.getExtras();
-            if (extras != null) {
-                AppExtras.saveExtras(path, launch, extras);
-            }
             Intent newIntent = new Intent();
             if (replaceFlag) {
                 newIntent.setComponent(componentName);
             } else {
                 newIntent.setComponent(intent.getComponent());
             }
+            newIntent.putExtras(extras);
             newIntent.putExtra(AppConstant.INTENT_APP_LAUNCH, launch);
             newIntent.putExtra(AppConstant.INTENT_APP_PATH, path);
             newIntent.putExtra(AppConstant.INTENT_APP_MODIFIERED, true);

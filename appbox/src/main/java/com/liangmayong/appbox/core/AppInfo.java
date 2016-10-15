@@ -145,8 +145,8 @@ public final class AppInfo {
      *
      * @return view
      */
-    public String getMainView() {
-        String mainView = getConfigure("main-view");
+    public String getMainFragment() {
+        String mainView = getConfigure("main-fragment");
         return replaceClassName(mainView);
     }
 

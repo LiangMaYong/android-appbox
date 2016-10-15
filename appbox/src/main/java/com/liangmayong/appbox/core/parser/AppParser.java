@@ -57,7 +57,7 @@ public final class AppParser {
                     AssetManager assetManager = AppResources.getAssets(context, appPath);
                     try {
                         InputStream inputStream = assetManager.open("appbox.xml");
-                        List<Map<String, String>> mapLists = XmlParser.readXml(inputStream, "appbox");
+                        List<Map<String, String>> mapLists = AppXmlParser.readXml(inputStream, "appbox");
                         if (mapLists != null && !mapLists.isEmpty()) {
                             appInfo.setField("configure", mapLists.get(0));
                         }
@@ -70,7 +70,7 @@ public final class AppParser {
                         info.publicSourceDir = appPath;
                     }
                     info.nativeLibraryDir = AppNative.getNativePath(appPath);
-                    String applicationName = ManifestParser.getApplicationName(appPath);
+                    String applicationName = AppManifestParser.getApplicationName(appPath);
                     if (applicationName != null && !"".equals(applicationName)) {
                         if (applicationName.startsWith(".")) {
                             info.className = pkg.packageName + applicationName;
@@ -82,7 +82,7 @@ public final class AppParser {
                     }
                     appInfo.setField("packageInfo", pkg);
                     appInfo.setField("icon", info.loadIcon(pm));
-                    appInfo.setField("intentFilters", ManifestParser.getIntentFilter(appPath));
+                    appInfo.setField("intentFilters", AppManifestParser.getIntentFilter(appPath));
                     appInfo.setField("lable", pm.getApplicationLabel(info).toString());
                     return appInfo;
                 }

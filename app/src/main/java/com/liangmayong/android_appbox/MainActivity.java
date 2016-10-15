@@ -14,7 +14,6 @@ import com.liangmayong.appbox.core.AppFragment;
 import com.liangmayong.appbox.core.AppInfo;
 import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppNative;
-import com.liangmayong.appbox.manager.litepal.AppDataSupport;
 import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
 import com.liangmayong.skin.Skin;
@@ -27,8 +26,7 @@ import java.io.OutputStream;
 public class MainActivity extends BaseActivity {
     private TextView textView;
     private AppInfo info = null;
-    private String appName = "universal.apk";
-
+    private String appName = "base1.apk";
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -51,16 +49,10 @@ public class MainActivity extends BaseActivity {
 
     private void initView() {
         if (info != null) {
-            AppDataSupport.save(this, info.getAppPath());
-            if (new File(info.getAppPath()).exists()) {
-                textView.setText(info.getLable() + "\n" + info.getSignture());
-                Bundle bundle = new Bundle();
-                bundle.putString("name", "lmy");
-                AppLauncher.startActivity(this, info.getAppPath(), info.getMain(), bundle);
-            }
-            showToast(AppDataSupport.findByAppPath(this, info.getAppPath()) + "");
+            //AppLauncher.startActivity(this, info.getAppPath(), info.getMain());
             AppFragment frag = new AppFragment(info);
             commitFragment(frag, "AppboxFragment");
+            textView.setText("");
         } else {
             install();
         }

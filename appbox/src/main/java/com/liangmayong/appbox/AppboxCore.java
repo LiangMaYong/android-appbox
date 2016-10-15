@@ -3,11 +3,11 @@ package com.liangmayong.appbox;
 import android.app.Application;
 import android.app.Instrumentation;
 
+import com.liangmayong.appbox.core.AppCrashHandler;
 import com.liangmayong.appbox.core.AppHookHandler;
 import com.liangmayong.appbox.core.AppInstrumentation;
+import com.liangmayong.appbox.core.AppProcess;
 import com.liangmayong.appbox.core.AppReflect;
-
-import org.litepal.LitePalApplication;
 
 /**
  * Created by LiangMaYong on 2016/9/18.
@@ -59,7 +59,9 @@ public class AppboxCore {
             return false;
         }
         AppHookHandler.hook(application);
-        LitePalApplication.initialize(application);
+        if(AppProcess.getCurrentProcessName(application).equals(application.getPackageName()+":appbox")){
+            AppCrashHandler.getInstance().init();
+        }
         try {
             Object loadedApk = AppReflect.getField(Application.class, application, "mLoadedApk");
             if (loadedApk != null) {

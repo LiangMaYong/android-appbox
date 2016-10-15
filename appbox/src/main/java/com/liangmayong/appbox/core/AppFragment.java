@@ -20,9 +20,17 @@ public class AppFragment extends Fragment {
     private final AppInfo info;
     // fragmentView
     private FragmentView fragmentView;
+    // fragmentName
+    private String fragmentName;
 
     public AppFragment(AppInfo info) {
         this.info = info;
+        this.fragmentName = info.getMainFragment();
+    }
+
+    public AppFragment(AppInfo info, String fragmentName) {
+        this.info = info;
+        this.fragmentName = fragmentName;
     }
 
     @Override
@@ -31,7 +39,7 @@ public class AppFragment extends Fragment {
         if (info != null) {
             if (AppboxCore.getInstance().isInited()) {
                 try {
-                    fragmentView = new FragmentView(getActivity(), info.getAppPath(), info.getMainView());
+                    fragmentView = new FragmentView(getActivity(), info.getAppPath(), fragmentName);
                 } catch (Exception e) {
                 }
             }

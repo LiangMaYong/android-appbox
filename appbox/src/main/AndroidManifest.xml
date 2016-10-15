@@ -13,11 +13,13 @@
         <activity
             android:name=".core.box.BoxActivity"
             android:enabled="true"
+            android:process=":appbox"
             android:exported="true" />
         <!--seize a seat service-->
         <service
             android:name=".core.box.BoxService"
             android:enabled="true"
+            android:process=":appbox"
             android:exported="true" />
     </application>
 

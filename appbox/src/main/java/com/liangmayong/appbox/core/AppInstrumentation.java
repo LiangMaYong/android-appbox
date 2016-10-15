@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -345,6 +346,7 @@ public final class AppInstrumentation extends Instrumentation {
 
     public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
                                             Intent intent, int requestCode, Bundle options) {
+        Log.e("TAG",intent.getExtras()+"");
         try {
             return proxyExecStartActivity(who, contextThread, token, target, intent, requestCode, options);
         } catch (Exception e) {

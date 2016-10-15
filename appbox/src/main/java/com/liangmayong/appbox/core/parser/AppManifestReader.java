@@ -29,13 +29,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * ManifestReader
+ * AppManifestReader
  */
-public final class ManifestReader {
+public final class AppManifestReader {
 
     public static final String DEFAULT_XML = "AndroidManifest.xml";
 
-    private ManifestReader() {
+    private AppManifestReader() {
     }
 
     /**

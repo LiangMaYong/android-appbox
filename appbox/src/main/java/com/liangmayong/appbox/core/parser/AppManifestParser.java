@@ -19,14 +19,14 @@ import android.os.PatternMatcher;
 import android.text.TextUtils;
 
 /**
- * ManifestParser
+ * AppManifestParser
  *
  * @author LiangMaYong
  * @version 1.0
  */
-public final class ManifestParser {
+public final class AppManifestParser {
 
-    private ManifestParser() {
+    private AppManifestParser() {
     }
 
     /**
@@ -41,8 +41,8 @@ public final class ManifestParser {
         }
         try {
             ZipFile zipFile = new ZipFile(new File(apkPath), ZipFile.OPEN_READ);
-            ZipEntry manifestXmlEntry = zipFile.getEntry(ManifestReader.DEFAULT_XML);
-            String manifestXML = ManifestReader.getManifestXMLFromAPK(zipFile, manifestXmlEntry);
+            ZipEntry manifestXmlEntry = zipFile.getEntry(AppManifestReader.DEFAULT_XML);
+            String manifestXML = AppManifestReader.getManifestXMLFromAPK(zipFile, manifestXmlEntry);
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();

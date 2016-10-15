@@ -24,5 +24,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':appbox')
     compile 'com.liangmayong.android:base:1.0.0'
-    compile 'com.firebase:firebase-client-android:2.3.1'
 }

@@ -3,6 +3,7 @@ package com.liangmayong.appbox.core;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.liangmayong.appbox.core.listener.OnActivityLifeCycleListener;
 import com.liangmayong.appbox.core.modifiers.AppActivityModifier;
@@ -119,15 +120,6 @@ public final class AppLifeCycle {
             ACTIVITIES.add(target);
         }
         String appPath = getAppPathByActivity(target);
-
-        if (target.getPackageName().equals(AppProcess.getCurrentProcessName(target))) {
-            Bundle bundle = AppExtras.getExtras(appPath, target.getClass().getName());
-            if (bundle != null) {
-                Intent intent = new Intent();
-                intent.putExtras(bundle);
-                target.setIntent(intent);
-            }
-        }
         AppActivityModifier.modify(target, appPath);
         //Log.e("TAG", LayoutInflater.from(target).getContext().getClass().getName());
         if (appPath != null && !"".equals(appPath)) {

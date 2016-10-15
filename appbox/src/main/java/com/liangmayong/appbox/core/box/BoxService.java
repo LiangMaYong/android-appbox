@@ -2,11 +2,9 @@ package com.liangmayong.appbox.core.box;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import com.liangmayong.appbox.core.AppConstant;
-import com.liangmayong.appbox.core.AppExtras;
 import com.liangmayong.appbox.core.manager.AppServiceManager;
 
 /**
@@ -22,10 +20,6 @@ public class BoxService extends Service {
             if (path == null) {
                 path = "";
             }
-            Bundle bundle = AppExtras.getExtras(path, serviceName);
-            if (bundle != null) {
-                intent.putExtras(bundle);
-            }
             Service service = AppServiceManager.handleCreateService(this, path, serviceName);
             return service.onBind(intent);
         }
@@ -39,10 +33,6 @@ public class BoxService extends Service {
             String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
             if (path == null) {
                 path = "";
-            }
-            Bundle bundle = AppExtras.getExtras(path, serviceName);
-            if (bundle != null) {
-                intent.putExtras(bundle);
             }
             Service service = AppServiceManager.handleCreateService(this, path, serviceName);
             service.onRebind(intent);
@@ -71,10 +61,6 @@ public class BoxService extends Service {
             String path = intent.getStringExtra(AppConstant.INTENT_APP_PATH);
             if (path == null) {
                 path = "";
-            }
-            Bundle bundle = AppExtras.getExtras(path, serviceName);
-            if (bundle != null) {
-                intent.putExtras(bundle);
             }
             Service service = AppServiceManager.handleCreateService(this, path, serviceName);
             service.onStart(intent, startId);

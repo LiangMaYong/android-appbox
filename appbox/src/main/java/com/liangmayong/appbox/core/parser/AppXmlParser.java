@@ -14,12 +14,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XmlParser
+ * AppXmlParser
  *
  * @author LiangMaYong
  * @version 1.0
  */
-public class XmlParser extends DefaultHandler {
+public class AppXmlParser extends DefaultHandler {
 
     Map<String, String> map = null;
     List<Map<String, String>> list = null;
@@ -40,7 +40,7 @@ public class XmlParser extends DefaultHandler {
     public static List<Map<String, String>> readXml(InputStream inStream, String nodeName) throws Exception {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser saxParser = spf.newSAXParser();
-        XmlParser handler = new XmlParser(nodeName);
+        AppXmlParser handler = new AppXmlParser(nodeName);
         saxParser.parse(inStream, handler);
         inStream.close();
         return handler.getList();
@@ -59,13 +59,13 @@ public class XmlParser extends DefaultHandler {
             throws Exception {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser saxParser = spf.newSAXParser();
-        XmlParser handler = new XmlParser(nodeName, form);
+        AppXmlParser handler = new AppXmlParser(nodeName, form);
         saxParser.parse(inStream, handler);
         inStream.close();
         return handler.getList();
     }
 
-    private XmlParser(String nodeName, String[] string) {
+    private AppXmlParser(String nodeName, String[] string) {
         this.nodeName = nodeName;
         if (string != null) {
             strings = new ArrayList<String>();
@@ -75,7 +75,7 @@ public class XmlParser extends DefaultHandler {
         }
     }
 
-    private XmlParser(String nodeName) {
+    private AppXmlParser(String nodeName) {
         this.nodeName = nodeName;
     }
 
