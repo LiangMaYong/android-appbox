@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
  * Created by LiangMaYong on 2016/9/21.
  */
 public class AppActivityModifier {
+
     private AppActivityModifier() {
     }
 
