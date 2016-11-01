@@ -9,18 +9,16 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
-        <!--seize a seat activity-->
         <activity
             android:name=".core.box.BoxActivity"
             android:enabled="true"
-            android:process=":appbox"
-            android:exported="true" />
-        <!--seize a seat service-->
+            android:exported="true"
+            android:process=":appbox" />
         <service
             android:name=".core.box.BoxService"
             android:enabled="true"
-            android:process=":appbox"
-            android:exported="true" />
+            android:exported="true"
+            android:process=":appbox" />
     </application>
 
 </manifest>

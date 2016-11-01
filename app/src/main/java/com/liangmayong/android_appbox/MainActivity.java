@@ -12,10 +12,10 @@ import android.widget.TextView;
 import com.liangmayong.appbox.core.AppClassLoader;
 import com.liangmayong.appbox.core.AppFragment;
 import com.liangmayong.appbox.core.AppInfo;
+import com.liangmayong.appbox.core.AppLauncher;
 import com.liangmayong.appbox.core.AppNative;
 import com.liangmayong.base.BaseActivity;
 import com.liangmayong.preferences.Preferences;
-import com.liangmayong.skin.Skin;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +40,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Skin.editor().setThemeColor(0xfffcb815, 0xffffffff).commit();
         textView = (TextView) findViewById(R.id.textView);
         info = AppInfo.get(this, Preferences.getDefaultPreferences().getString(appName));
         initView();
@@ -48,7 +47,7 @@ public class MainActivity extends BaseActivity {
 
     private void initView() {
         if (info != null) {
-            //AppLauncher.startActivity(this, info.getAppPath(), info.getMain());
+            AppLauncher.startActivity(this, info.getAppPath(), info.getMain());
             AppFragment frag = new AppFragment(info);
             commitFragment(frag, "AppboxFragment");
             textView.setText("");
